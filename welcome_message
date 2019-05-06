@@ -1,0 +1,16 @@
+#!bin/bash
+
+#This is a readme file only. Dedicated to a greeting.
+
+echo 
+
+"Hello everyone!"
+"This is my github page for my capstone project, where I will be adding in" 
+"all of my code to help merge 10 servers and 2 routers over a private and"
+"public network and this is where I will struggle. It has been nearly a year"
+"since I worked with a github repository, so I will also be self teaching as"
+"I go along. I will include this page on my personal website that I am creating"
+"to market myself available at the link below."
+
+######################################################################
+"https://editor.wix.com/html/editor/web/renderer/external_preview/document/efb2a483-3f0d-4cfb-b6ba-db341a7ae6b3?metaSiteId=64772767-f2eb-4ab6-bca9-084f75468adb"
