@@ -79,7 +79,7 @@ DATABASES = {
         'NAME': 'myproject',
         'USER': 'myprojectuser',
         'PASSWORD': 'password',
-        'HOST': '$lobaserv1_private',
+        'HOST': 'lobaserv1_private',
         'PORT': '5432',
     }
 }
