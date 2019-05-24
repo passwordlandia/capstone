@@ -1,0 +1,13 @@
+#!/bin/bash
+
+appublic=$( systemctl status httpd | grep "active (running)" )
+
+if [ ! -z "$appublic"]; then
+    echo "STATUS:OKAY"
+    exit 0;
+    
+  elif [ -z "$appublic"]; then
+    echo "STATUS:CRITICAL"
+    exit 2;
+    
+fi
