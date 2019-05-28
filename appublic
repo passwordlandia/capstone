@@ -1,6 +1,19 @@
 #!/bin/bash
 
-yum -y install httpd
+#I have to clean up yum first
+sudo yum clean all
+#Then I will update it
+sudo yum -y update
+#And we have to install apache
+sudo yum -y install httpd
 
-systemctl start httpd
-systemctl enable httpd
+#Another thing I have to do is add in apache to get past my firewalls etc.
+#And then I will reload the firewalls
+sudo firewall-cmd --permanent --add-port=80/tcp
+sudo firewall-cmd --permanent --add-port=443/tcp
+sudo firewall-cmd --reload
+
+#I will install apache and reload it too
+sudo systemctl start httpd
+sudo systemctl enable httpd
+
