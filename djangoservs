@@ -20,7 +20,7 @@ wget https://raw.githubusercontent.com/passwordlandia/capstone/master/settings.p
 
 sudo pip install virtualenv
 virtualenv myprojectenv
-source myprojectenv/bin/activate && pip install django psycopg2.7 && django-admin.py startproject myproject .
+source myprojectenv/bin/activate && pip install django psycopg2-binary && django-admin.py startproject myproject .
 
 mv -f /opt/myproject/settings.py /opt/myproject/myproject/settings.py
 
