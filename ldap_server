@@ -20,7 +20,7 @@ systemctl start httpd
 
 sed -i 's,Require local,#Require local\n Require all granted,g' /etc/httpd/conf.d/phpldapadmin.conf
 
-cp hello-nti-310/config/config.php  /etc/phpldapadmin/config.php 
+cp capstone/config.php  /etc/phpldapadmin/config.php 
 chown ldap:apache /etc/phpldapadmin/config.php
 
 systemctl restart httpd.service
@@ -36,12 +36,12 @@ chmod 0600 /root/ldap_admin_pass
 echo -e "dn: olcDatabase={2}hdb,cn=config
 changetype: modify
 replace: olcSuffix
-olcSuffix: dc=nti310,dc=local
+olcSuffix: dc=itc299,dc=local
 \n
 dn: olcDatabase={2}hdb,cn=config
 changetype: modify
 replace: olcRootDN
-olcRootDN: cn=ldapadm,dc=nti310,dc=local
+olcRootDN: cn=ldapadm,dc=itc299,dc=local
 \n
 dn: olcDatabase={2}hdb,cn=config
 changetype: modify
@@ -53,21 +53,21 @@ ldapmodify -Y EXTERNAL  -H ldapi:/// -f db.ldif
 echo -e 'dn: olcDatabase={1}monitor,cn=config
 changetype: modify
 replace: olcAccess
-olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external, cn=auth" read by dn.base="cn=ldapadm,dc=nti310,dc=local" read by * none' > monitor.ldif
+olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external, cn=auth" read by dn.base="cn=ldapadm,dc=itc299,dc=local" read by * none' > monitor.ldif
 \n
 ldapmodify -Y EXTERNAL  -H ldapi:/// -f monitor.ldif
-openssl req -new -x509 -nodes -out /etc/openldap/certs/nti310ldapcert.pem -keyout /etc/openldap/certs/nti310ldapkey.pem -days 365 -subj "/C=US/ST=WA/L=Seattle/O=SCC/OU=IT/CN=nti310.local"
+openssl req -new -x509 -nodes -out /etc/openldap/certs/itc299ldapcert.pem -keyout /etc/openldap/certs/itc299ldapkey.pem -days 365 -subj "/C=US/ST=WA/L=Seattle/O=SCC/OU=IT/CN=itc299.local"
 chown -R ldap. /etc/openldap/certs/nti*.pem
 
 echo -e "dn: cn=config
 changetype: modify
 replace: olcTLSCertificateFile
-olcTLSCertificateFile: /etc/openldap/certs/nti310ldapcert.pem
+olcTLSCertificateFile: /etc/openldap/certs/itc299ldapcert.pem
 /n
 dn: cn=config
 changetype: modify
 replace: olcTLSCertificateKeyFile
-olcTLSCertificateKeyFile: /etc/openldap/certs/nti310ldapkey.pem" > certs.ldif
+olcTLSCertificateKeyFile: /etc/openldap/certs/itc299ldapkey.pem" > certs.ldif
 /n
 ldapmodify -Y EXTERNAL  -H ldapi:/// -f certs.ldif
 slaptest -u
@@ -77,25 +77,25 @@ ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif
 ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif 
 ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
 
-echo -e "dn: dc=nti310,dc=local
-dc: nti310
+echo -e "dn: dc=itc299,dc=local
+dc: itc299
 objectClass: top
 objectClass: domain
 /n
-dn: cn=ldapadm ,dc=nti310,dc=local
+dn: cn=ldapadm ,dc=itc299,dc=local
 objectClass: organizationalRole
 cn: ldapadm
 description: LDAP Manager
 /n
-dn: ou=People,dc=nti310,dc=local
+dn: ou=People,dc=itc299,dc=local
 objectClass: organizationalUnit
 ou: People
 /n
-dn: ou=Group,dc=nti310,dc=local
+dn: ou=Group,dc=itc299,dc=local
 objectClass: organizationalUnit
 ou: Group" > base.ldif
 /n
-ldapadd -x -W -D "cn=ldapadm,dc=nti310,dc=local" -f base.ldif -y /root/ldap_admin_pass
+ldapadd -x -W -D "cn=ldapadm,dc=itc299,dc=local" -f base.ldif -y /root/ldap_admin_pass
 slaptest -u
 setenforce 0
 
