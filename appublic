@@ -13,6 +13,12 @@ sudo firewall-cmd --permanent --add-port=80/tcp
 sudo firewall-cmd --permanent --add-port=443/tcp
 sudo firewall-cmd --reload
 
+#commenting out my welcome.conf file
+sudo sed -i 's/^/#/g' /etc/httpd/conf.d/welcome.conf
+
+# Creating our index.html
+sudo echo -e "<html> \n<h1> Welcome to my Capstone Project!</h1> \n</html>" > /var/www/html/index.html    
+
 #I will enable and start my apache too
 sudo systemctl enable httpd
 sudo systemctl start httpd
