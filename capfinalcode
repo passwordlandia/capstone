@@ -58,7 +58,7 @@ gcloud compute instances create pgpriv  \
     --image-project centos-cloud \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag \
     --subnet=lbs1-subnet \
-    --metadata-from-file startup-script="capstone/pgpriv.sh"
+    --metadata-from-file startup-script="capstone/pgpriv"
     
 pgip=$(gcloud compute instances list | grep pgpriv | awk '{ print $4 }' | tail -1)
 
@@ -72,7 +72,7 @@ gcloud compute instances create nfspriv  \
     --image-project centos-cloud \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag \
     --subnet=lbs1-subnet \
-    --metadata-from-file startup-script="capstone/nfspriv.sh"
+    --metadata-from-file startup-script="capstone/nfspriv"
 
 #This is my LDAP server code:
 gcloud compute instances create ldappriv  \
@@ -82,7 +82,7 @@ gcloud compute instances create ldappriv  \
     --image-project centos-cloud \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag \
     --subnet=lbs1-subnet \
-    --metadata-from-file startup-script="capstone/ldappriv.sh"
+    --metadata-from-file startup-script="capstone/ldappriv"
 
 #This is my Nagios server code:
 gcloud compute instances create nagpriv  \
@@ -92,7 +92,7 @@ gcloud compute instances create nagpriv  \
     --image-project centos-cloud \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag \
     --subnet=lbs1-subnet \
-    --metadata-from-file startup-script="capstone/nagpriv.sh"
+    --metadata-from-file startup-script="capstone/nagpriv"
 
 
 ##########################################################################################################################
@@ -135,7 +135,7 @@ gcloud compute instances create appublic  \
     --image-project centos-cloud \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag \
     --subnet=lbs2-subnet \
-    --metadata-from-file startup-script="capstone/appublic.sh"
+    --metadata-from-file startup-script="capstone/appublic"
 
 #This is my DJANGO server 1 code:
 gcloud compute instances create djpub1  \
@@ -145,7 +145,7 @@ gcloud compute instances create djpub1  \
     --image-project centos-cloud \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag \
     --subnet=lbs2-subnet \
-    --metadata-from-file startup-script="capstone/djpubs.sh"
+    --metadata-from-file startup-script="capstone/djpubs"
 
 #This is my DJANGO server 2 code:
 gcloud compute instances create djpub2  \
@@ -155,7 +155,7 @@ gcloud compute instances create djpub2  \
     --image-project centos-cloud \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag \
     --subnet=lbs2-subnet \
-    --metadata-from-file startup-script="capstone/djpubs.sh"
+    --metadata-from-file startup-script="capstone/djpubs"
    
  #This is my DJANGO server 3 code:
 gcloud compute instances create djpub3  \
@@ -165,4 +165,4 @@ gcloud compute instances create djpub3  \
     --image-project centos-cloud \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag \
     --subnet=lbs2-subnet \
-    --metadata-from-file startup-script="capstone/djpubs.sh"
+    --metadata-from-file startup-script="capstone/djpubs"
