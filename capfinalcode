@@ -73,6 +73,10 @@ gcloud compute instances create nfspriv  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag \
     --subnet=lbs1-subnet \
     --metadata-from-file startup-script="capstone/nfspriv"
+ 
+nfsip=$(gcloud compute instances list | grep nfspriv | awk '{ print $4 }' | tail -1)
+
+echo $nfsip > nfsip.txt
 
 #This is my LDAP server code:
 gcloud compute instances create ldappriv  \
@@ -84,6 +88,10 @@ gcloud compute instances create ldappriv  \
     --subnet=lbs1-subnet \
     --metadata-from-file startup-script="capstone/ldappriv"
 
+ldapip=$(gcloud compute instances list | grep ldappriv | awk '{ print $4 }' | tail -1)
+
+echo $ldapip > ldapip.txt
+
 #This is my Nagios server code:
 gcloud compute instances create nagpriv  \
     --zone=us-us-west1-b  \
@@ -93,6 +101,10 @@ gcloud compute instances create nagpriv  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag \
     --subnet=lbs1-subnet \
     --metadata-from-file startup-script="capstone/nagpriv"
+
+nagip=$(gcloud compute instances list | grep nagpriv | awk '{ print $4 }' | tail -1)
+
+echo $nagip > nagip.txt
 
 
 ##########################################################################################################################
