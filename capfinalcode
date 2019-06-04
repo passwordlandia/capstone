@@ -1,0 +1,132 @@
+#!/bin/bash
+
+yum -y install google-cloud-sdk
+google-cloud-sdk-app-engine-python
+
+gcloud init
+
+yum -y install python-pip
+pip install --upgrade pip
+pip install oauth2client
+pip install --upgrade google-api-python-client
+
+yum install git -y
+
+git clone https://github.com/passwordlandia/capstone.git
+
+#This is my startup script for my load balancer, it is a work in progress.
+#But I hope to have it refined by the end of the week.
+
+gcloud compute networks create lbs1priv-network --subnet-mode=custom
+
+gcloud compute networks subnets create lbs1-subnet \
+    --network=lbs1priv-network \
+    --range=10.168.0.3/24 \
+    --region=us-west1-a
+
+gcloud compute firewall-rules create fw-allow-lbs1-subnet \
+    --network=lbs1priv-network \
+    --action=allow \
+    --direction=ingress \
+    --source-ranges=10.168.0.3/24 \
+    --rules=tcp,udp,icmp
+    
+gcloud compute firewall-rules create fw-allow-ssh \
+    --network=lbs1priv-network \
+    --action=allow \
+    --direction=ingress \
+    --target-tags=allow-ssh \
+    --rules=tcp:22
+
+gcloud compute firewall-rules create fw-allow-health-check \
+    --network=lbs1priv-network \
+    --action=allow \
+    --direction=ingress \
+    --target-tags=allow-health-check \
+    --source-ranges=130.211.0.0/22,35.191.0.0/16 \
+    --rules=tcp,udp,icmp
+
+########################################################################################################################
+####################################PRIVATE SERVER CODE#################################################################
+#This is my POSTGRES server code:
+gcloud compute instances create pgpriv  \
+    --zone=us-us-west1-a  \
+    --machine-type f1-micro \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --tags=allow-ssh,allow-health-check,http,https \
+    --subnet=lbs1-subnet \
+    --metadata-from-file startup-script="capstone/pgpriv.sh"
+
+#This is my NFS server code:
+gcloud compute instances create nfspriv  \
+    --zone=us-us-west1-a  \
+    --machine-type f1-micro \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --tags=allow-ssh,allow-health-check,http,https \
+    --subnet=lbs1-subnet \
+   --metadata-from-file startup-script="capstone/nfspriv.sh"
+
+#This is my LDAP server code:
+gcloud compute instances create ldappriv  \
+    --zone=us-us-west1-a  \
+    --machine-type f1-micro \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --tags=allow-ssh,allow-health-check,http,https \
+    --subnet=lbs1-subnet \
+    --metadata-from-file startup-script="capstone/ldappriv.sh"
+
+#This is my Nagios server code:
+gcloud compute instances create nagpriv  \
+    --zone=us-us-west1-a  \
+    --machine-type f1-micro \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --tags=allow-ssh,allow-health-check,http,https \
+    --subnet=lbs1-subnet \
+   --metadata-from-file startup-script="capstone/nagpriv.sh"
+
+
+########################################################################################################################
+####################################PUBLIC SERVER CODE##################################################################
+#This is my APACHE server code:
+gcloud compute instances create appublic  \
+    --zone=us-us-west1-a  \
+    --machine-type f1-micro \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --tags=allow-ssh,allow-health-check,http,https \
+    --subnet=lbs1-subnet \
+   --metadata-from-file startup-script="capstone/appublic.sh"
+
+#This is my DJANGO server 1 code:
+gcloud compute instances create djpub1  \
+    --zone=us-us-west1-a  \
+    --machine-type f1-micro \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --tags=allow-ssh,allow-health-check,http,https \
+    --subnet=lbs1-subnet \
+    --metadata-from-file startup-script="capstone/djpubs.sh"
+
+#This is my DJANGO server 2 code:
+gcloud compute instances create djpub2  \
+    --zone=us-us-west1-a  \
+    --machine-type f1-micro \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --tags=allow-ssh,allow-health-check,http,https \
+    --subnet=lbs1-subnet \
+   --metadata-from-file startup-script="capstone/djpubs.sh"
+
+#This is my DJANGO server 3 code:
+gcloud compute instances create appublic  \
+    --zone=us-us-west1-a  \
+    --machine-type f1-micro \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --tags=allow-ssh,allow-health-check,http,https \
+    --subnet=lbs1-subnet \
+   --metadata-from-file startup-script="capstone/pgpriv.sh"
