@@ -5,7 +5,6 @@ google-cloud-sdk-app-engine-python
 
 gcloud init
 
-yum -y install python-pip
 pip install --upgrade pip
 pip install oauth2client
 pip install --upgrade google-api-python-client
@@ -20,29 +19,32 @@ git clone https://github.com/passwordlandia/capstone.git
 ##########################################################################################################################
 ####################################PRIVATE SERVER CODE###################################################################
 ##########################################################################################################################
-gcloud compute networks create lbs1priv-network --subnet-mode=custom
+gcloud compute networks create lbs1private-network --subnet-mode=custom
 
 gcloud compute networks subnets create lbs1-subnet \
-    --network=lbs1priv-network \
+    --network=lbs1private-network \
     --range=10.168.0.0/24 \
-    --region=us-west1-a
+    --region=us-west1-b
+    
+gcloud compute firewall-rules create www-firewall \
+    --target-tags http-tag --allow tcp:80
 
 gcloud compute firewall-rules create fw-allow-lbs1-subnet \
-    --network=lbs1priv-network \
+    --network=lbs1private-network \
     --action=allow \
     --direction=ingress \
     --source-ranges=10.168.0.3/24 \
     --rules=tcp,udp,icmp
     
 gcloud compute firewall-rules create fw-allow-ssh \
-    --network=lbs1priv-network \
+    --network=lbs1private-network \
     --action=allow \
     --direction=ingress \
     --target-tags=allow-ssh \
     --rules=tcp:22
 
 gcloud compute firewall-rules create fw-allow-health-check \
-    --network=lbs1priv-network \
+    --network=lbs1private-network \
     --action=allow \
     --direction=ingress \
     --target-tags=allow-health-check \
@@ -50,6 +52,24 @@ gcloud compute firewall-rules create fw-allow-health-check \
     --rules=tcp,udp,icmp
 
 ##########################################################################################################################
+
+#This is my LOADBALANCER code:
+gcloud compute instances create lbs1priv \
+    --image-family debian-8 \
+    --image-project debian-cloud \
+    --tags tcp-lb \
+    --zone us-west1-b \
+    --metadata startup-script="#! /bin/bash
+      sudo apt-get update
+      sudo apt-get install apache2 -y
+      sudo sed -i '/Listen 80/c\Listen 110' /etc/apache2/ports.conf
+      sudo sed -i '/\/c\\' /etc/apache2/sites-enabled/000-default.conf
+      sudo service apache2 restart
+      echo '<!doctype html><html><body><h1>lbs1priv</h1></body></html>' | tee /var/www/html/index.html
+      EOF"
+
+lbs1ip=$(gcloud compute instances list | grep lbs1priv | awk '{ print $4 }' | tail -1)
+
 #This is my POSTGRES server code:
 gcloud compute instances create pgpriv  \
     --zone=us-us-west1-b  \
@@ -61,8 +81,6 @@ gcloud compute instances create pgpriv  \
     --metadata-from-file startup-script="capstone/pgpriv"
     
 pgip=$(gcloud compute instances list | grep pgpriv | awk '{ print $4 }' | tail -1)
-
-echo $pgip > pgip.txt
 
 #This is my NFS server code:
 gcloud compute instances create nfspriv  \
@@ -76,8 +94,6 @@ gcloud compute instances create nfspriv  \
  
 nfsip=$(gcloud compute instances list | grep nfspriv | awk '{ print $4 }' | tail -1)
 
-echo $nfsip > nfsip.txt
-
 #This is my LDAP server code:
 gcloud compute instances create ldappriv  \
     --zone=us-us-west1-b  \
@@ -90,8 +106,6 @@ gcloud compute instances create ldappriv  \
 
 ldapip=$(gcloud compute instances list | grep ldappriv | awk '{ print $4 }' | tail -1)
 
-echo $ldapip > ldapip.txt
-
 #This is my Nagios server code:
 gcloud compute instances create nagpriv  \
     --zone=us-us-west1-b  \
@@ -103,9 +117,6 @@ gcloud compute instances create nagpriv  \
     --metadata-from-file startup-script="capstone/nagpriv"
 
 nagip=$(gcloud compute instances list | grep nagpriv | awk '{ print $4 }' | tail -1)
-
-echo $nagip > nagip.txt
-
 
 ##########################################################################################################################
 ####################################PUBLIC SERVER CODE####################################################################
