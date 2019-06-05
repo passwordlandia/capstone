@@ -162,7 +162,7 @@ gcloud compute instances create lbs2pub \
       sudo sed -i '/Listen 80/c\Listen 110' /etc/apache2/ports.conf
       sudo sed -i '/\/c\\' /etc/apache2/sites-enabled/000-default.conf
       sudo service apache2 restart
-      echo '<!doctype html><html><body><h1>lbs1priv</h1></body></html>' | tee /var/www/html/index.html
+      echo '<!doctype html><html><body><h1>lbs2pub</h1></body></html>' | tee /var/www/html/index.html
       EOF"
 
 lbs1ip=$(gcloud compute instances list | grep lbs1priv | awk '{ print $4 }' | tail -1)
