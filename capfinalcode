@@ -14,7 +14,7 @@ yum install git -y
 git clone https://github.com/passwordlandia/capstone.git
 
 #This is my startup script for my load balancer, it is a work in progress.
-#But I hope to have it refined by the end of the week.
+#But I hope to have it refined by the end of the week. I am testing this week.
 
 ##########################################################################################################################
 ####################################PRIVATE SERVER CODE###################################################################
