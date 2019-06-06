@@ -52,14 +52,14 @@ gcloud compute networks create lbs2public-network --subnet-mode=custom
 
 gcloud compute networks subnets create lbs2subnet \
     --network=lbs2public-network \
-    --range=10.168.1.0 to 10.168.15.0 \
+    --range=10.168.1.0 to 10.168.1.15 \
     --region=us-west1-b
 
 gcloud compute firewall-rules create fw-allow-lbs2-subnet \
     --network=lbs2public-network \
     --action=allow \
     --direction=ingress \
-    --source-ranges=10.168.1.0 to 10.168.15.0 \
+    --source-ranges=10.168.1.0 to 10.168.1.15 \
     --rules=tcp,udp,icmp
     
 gcloud compute firewall-rules create fw-allow-ssh \
