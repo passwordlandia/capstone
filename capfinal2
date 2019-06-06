@@ -2,43 +2,35 @@
 
 yum -y install google-cloud-sdk
 google-cloud-sdk-app-engine-python
-
 gcloud init
 
+yum -y install python-pip
 pip install --upgrade pip
 pip install oauth2client
 pip install --upgrade google-api-python-client
-
 yum install git -y
-
 git clone https://github.com/passwordlandia/capstone.git
 
-#########################################VPC SECTION################################################################
-
-gcloud compute networks create lbs1private-network --subnet-mode=custom
+gcloud compute networks create lbs1priv-network --subnet-mode=custom
 
 gcloud compute networks subnets create lbs1-subnet \
-    --network=lbs1private-network \
+    --network=lbs1priv-network \
     --range=10.168.0.0 t0 10.168.0.15\
     --region=us-west1-b
-
 gcloud compute firewall-rules create www-firewall \
     --target-tags http-tag --allow tcp:80
-
 gcloud compute firewall-rules create fw-allow-lbs1-subnet \
     --network=lbs1private-network \
     --action=allow \
     --direction=ingress \
     --source-ranges=10.168.0.3 t0 10.168.0.15 \
-    --rules=tcp,udp,icmp
-    
+    --rules=tcp,udp,icmp    
 gcloud compute firewall-rules create fw-allow-ssh \
     --network=lbs1private-network \
     --action=allow \
     --direction=ingress \
     --target-tags=allow-ssh \
     --rules=tcp:22
-
 gcloud compute firewall-rules create fw-allow-health-check \
     --network=lbs1private-network \
     --action=allow \
@@ -46,29 +38,23 @@ gcloud compute firewall-rules create fw-allow-health-check \
     --target-tags=allow-health-check \
     --source-ranges=130.211.0.0/22,35.191.0.0/16 \
     --rules=tcp,udp,icmp
-
-
 gcloud compute networks create lbs2public-network --subnet-mode=custom
-
 gcloud compute networks subnets create lbs2subnet \
     --network=lbs2public-network \
     --range=10.168.1.0 to 10.168.1.15 \
     --region=us-west1-b
-
 gcloud compute firewall-rules create fw-allow-lbs2-subnet \
     --network=lbs2public-network \
     --action=allow \
     --direction=ingress \
     --source-ranges=10.168.1.0 to 10.168.1.15 \
-    --rules=tcp,udp,icmp
-    
+    --rules=tcp,udp,icmp   
 gcloud compute firewall-rules create fw-allow-ssh \
     --network=lbs2public-network \
     --action=allow \
     --direction=ingress \
     --target-tags=allow-ssh \
     --rules=tcp:22
-
 gcloud compute firewall-rules create fw-allow-health-check \
     --network=lbs2public-network \
     --action=allow \
@@ -76,9 +62,6 @@ gcloud compute firewall-rules create fw-allow-health-check \
     --target-tags=allow-health-check \
     --source-ranges=130.211.0.0/22,35.191.0.0/16 \
     --rules=tcp,udp,icmp
-########################################configuring instances#######################################################
-
-#This is my LOADBALANCER code:
 gcloud compute instances create lbs1priv \
     --image-family debian-8 \
     --image-project debian-cloud \
@@ -92,10 +75,7 @@ gcloud compute instances create lbs1priv \
       sudo service apache2 restart
       echo '<!doctype html><html><body><h1>lbs1priv</h1></body></html>' | tee /var/www/html/index.html
       EOF"
-
 lbs1ip=$(gcloud compute instances list | grep lbs1priv | awk '{ print $4 }' | tail -1)
-
-#This is my POSTGRES server code:
 gcloud compute instances create pgpriv  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -103,11 +83,8 @@ gcloud compute instances create pgpriv  \
     --image-project centos-cloud \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs1-subnet \
-    --metadata-from-file startup-script="capstone/pgpriv"
-    
+    --metadata-from-file startup-script="capstone/pgpriv"    
 pgip=$(gcloud compute instances list | grep pgpriv | awk '{ print $4 }' | tail -1)
-
-#This is my NFS server code:
 gcloud compute instances create nfspriv  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -116,10 +93,7 @@ gcloud compute instances create nfspriv  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs1-subnet \
     --metadata-from-file startup-script="capstone/nfspriv"
- 
 nfsip=$(gcloud compute instances list | grep nfspriv | awk '{ print $4 }' | tail -1)
-
-#This is my LDAP server code:
 gcloud compute instances create ldappriv  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -128,10 +102,7 @@ gcloud compute instances create ldappriv  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs1-subnet \
     --metadata-from-file startup-script="capstone/ldappriv"
-
 ldapip=$(gcloud compute instances list | grep ldappriv | awk '{ print $4 }' | tail -1)
-
-#This is my Nagios server code:
 gcloud compute instances create nagpriv  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -140,9 +111,7 @@ gcloud compute instances create nagpriv  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs1-subnet \
     --metadata-from-file startup-script="capstone/nagpriv"
-
 nagip=$(gcloud compute instances list | grep nagpriv | awk '{ print $4 }' | tail -1)
-
 gcloud compute instances create lbs2pub \
     --image-family debian-8 \
     --image-project debian-cloud \
@@ -156,10 +125,7 @@ gcloud compute instances create lbs2pub \
       sudo service apache2 restart
       echo '<!doctype html><html><body><h1>lbs2pub</h1></body></html>' | tee /var/www/html/index.html
       EOF"
-
 lbs1ip=$(gcloud compute instances list | grep lbs1priv | awk '{ print $4 }' | tail -1)
-
-#This is my APACHE server code:
 gcloud compute instances create appublic  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -168,8 +134,6 @@ gcloud compute instances create appublic  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs2-subnet \
     --metadata-from-file startup-script="capstone/appublic"
-
-#This is my DJANGO server 1 code:
 gcloud compute instances create djpub1  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -178,8 +142,6 @@ gcloud compute instances create djpub1  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs2-subnet \
     --metadata-from-file startup-script="capstone/djpubs"
-
-#This is my DJANGO server 2 code:
 gcloud compute instances create djpub2  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -188,8 +150,6 @@ gcloud compute instances create djpub2  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs2-subnet \
     --metadata-from-file startup-script="capstone/djpubs"
-   
- #This is my DJANGO server 3 code:
 gcloud compute instances create djpub3  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -198,93 +158,71 @@ gcloud compute instances create djpub3  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs2-subnet \
     --metadata-from-file startup-script="capstone/djpubs"
-
-########################Instance Group######################################################
 gcloud compute instance-groups unmanaged create lb1priv \
-    --zone us-west1-b
-    
+    --zone us-west1-b    
 gcloud compute instance-groups set-named-ports lb1priv \
     --named-ports tcp110:110 \
-    --zone us-west1-b
-    
+    --zone us-west1-b    
 gcloud compute instance-groups unmanaged add-instances lb1priv \
     --instances lbs1priv,pgpriv,nfspriv,ldappriv,nagpriv \
-    --zone us-west1-b
-    
+    --zone us-west1-b    
 gcloud compute instance-groups unmanaged create lb2pub \
-    --zone us-west1-b
-    
+    --zone us-west1-b    
 gcloud compute instance-groups set-named-ports lb2pub \
     --named-ports tcp110:110 \
-    --zone us-west1-b
-    
+    --zone us-west1-b    
 gcloud compute instance-groups unmanaged add-instances lb1priv \
     --instances lbs2pub,appublic,djpub1,djpub2,djpub3 \
     --zone us-west1-b
-    
-#######################Health Check, Backend Service##################################
-
-
 gcloud compute health-checks create tcp my-tcp-health-check --port 110
-
 gcloud compute backend-services create my-tcp-lb \
     --global \
     --protocol TCP \
     --health-checks my-tcp-health-check \
     --timeout 5m \
-    --port-name tcp110
-    
+    --port-name tcp110   
 gcloud compute backend-services add-backend my-tcp-lb \
     --global \
     --instance-group lb1priv \
     --instance-group-zone us-west1-b \
     --balancing-mode UTILIZATION \
-    --max-utilization 0.8
-    
+    --max-utilization 0.8   
 gcloud compute backend-services create my-tcp-lb \
     --global \
     --protocol TCP \
     --health-checks my-tcp-health-check \
     --timeout 5m \
-    --port-name tcp110
-    
+    --port-name tcp110   
 gcloud compute backend-services add-backend my-tcp-lb \
     --global \
     --instance-group lb2pub \
     --instance-group-zone us-west1-b \
     --balancing-mode UTILIZATION \
-    --max-utilization 0.8
-    
+    --max-utilization 0.8   
 gcloud compute target-tcp-proxies create my-tcp-lb-target-proxy \
     --backend-service my-tcp-lb \
-    --proxy-header NONE
-    
+    --proxy-header NONE    
 gcloud compute addresses create tcp-lb-static-ipv4 \
     --ip-version=IPV4 \
-    --global
-    
+    --global   
 gcloud compute addresses create tcp-lb-static-ipv6 \
     --ip-version=IPV6 \
-    --global
-    
+    --global   
 gcloud beta compute forwarding-rules create my-tcp-lb-ipv4-forwarding-rule \
     --global \
     --target-tcp-proxy my-tcp-lb-target-proxy \
     --address [10.168.0.3] \
-    --ports 110
-    
+    --ports 110    
 gcloud beta compute forwarding-rules create my-tcp-lb-ipv4-forwarding-rule \
     --global \
     --target-tcp-proxy my-tcp-lb-target-proxy \
     --address [10.168.1.2] \
-    --ports 110
-    
+    --ports 110   
 gcloud beta compute forwarding-rules create my-tcp-lb-ipv6-forwarding-rule \
     --global \
     --target-tcp-proxy my-tcp-lb-target-proxy \
     --address [LB_STATIC_IPV6] \
-    --ports 110
-    
+    --ports 110   
 gcloud compute firewall-rules create allow-tcplb-and-health \
      --source-ranges 130.211.0.0/22,35.191.0.0/16 \
      --target-tags tcp-lb \
