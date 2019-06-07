@@ -7,7 +7,8 @@ gcloud compute networks create lbs1priv-network --subnet-mode=custom
 gcloud compute networks subnets create lbs1-subnet \
     --network=lbs1priv-network \
     --range=10.168.0.0 t0 10.168.0.15\
-    --region=us-west1-b
+    --region=us-west1
+    --zone=us-west1-b
 
 gcloud compute firewall-rules create www-firewall \
     --target-tags http-tag --allow tcp:80
@@ -16,7 +17,7 @@ gcloud compute firewall-rules create fw-allow-lbs1-subnet \
     --network=lbs1private-network \
     --action=allow \
     --direction=ingress \
-    --source-ranges=10.168.0.3 t0 10.168.0.15 \
+    --source-ranges=10.168.0.3 to 10.168.0.15 \
     --rules=tcp,udp,icmp
 
 gcloud compute firewall-rules create fw-allow-ssh \
@@ -39,7 +40,8 @@ gcloud compute networks create lbs2public-network --subnet-mode=custom
 gcloud compute networks subnets create lbs2subnet \
     --network=lbs2public-network \
     --range=10.168.1.0 to 10.168.1.15 \
-    --region=us-west1-b
+    --region=us-west1
+    --zone=us-west1-b
 
 gcloud compute firewall-rules create fw-allow-lbs2-subnet \
     --network=lbs2public-network \
@@ -64,10 +66,11 @@ gcloud compute firewall-rules create fw-allow-health-check \
     --rules=tcp,udp,icmp
 
 gcloud compute instances create lbs1priv \
-    --image-family debian-8 \
+    --image-family debian-9 \
     --image-project debian-cloud \
-    --tags tcp-lb \
-    --zone us-west1-b \
+    --tags-tcp-lb \
+    --region=uswest1
+    --zone=us-west1-b \
     --metadata-from-file startup-script="capstone/lbsallow.sh"
 
 gcloud compute instances create pgpriv  \
