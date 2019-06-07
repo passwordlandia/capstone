@@ -2,7 +2,6 @@
 
 yum -y install google-cloud-sdk
 google-cloud-sdk-app-engine-python
-gcloud init
 
 pip install oauth2client
 pip install --upgrade google-api-python-client
