@@ -4,8 +4,6 @@ yum -y install google-cloud-sdk
 google-cloud-sdk-app-engine-python
 gcloud init
 
-yum -y install python-pip
-pip install --upgrade pip
 pip install oauth2client
 pip install --upgrade google-api-python-client
 yum install git -y
@@ -38,7 +36,9 @@ gcloud compute firewall-rules create fw-allow-health-check \
     --target-tags=allow-health-check \
     --source-ranges=130.211.0.0/22,35.191.0.0/16 \
     --rules=tcp,udp,icmp
+
 gcloud compute networks create lbs2public-network --subnet-mode=custom
+
 gcloud compute networks subnets create lbs2subnet \
     --network=lbs2public-network \
     --range=10.168.1.0 to 10.168.1.15 \
@@ -62,20 +62,14 @@ gcloud compute firewall-rules create fw-allow-health-check \
     --target-tags=allow-health-check \
     --source-ranges=130.211.0.0/22,35.191.0.0/16 \
     --rules=tcp,udp,icmp
+
 gcloud compute instances create lbs1priv \
     --image-family debian-8 \
     --image-project debian-cloud \
     --tags tcp-lb \
     --zone us-west1-b \
-    --metadata startup-script="#! /bin/bash
-      sudo apt-get update
-      sudo apt-get install apache2 -y
-      sudo sed -i '/Listen 80/c\Listen 110' /etc/apache2/ports.conf
-      sudo sed -i '/\/c\\' /etc/apache2/sites-enabled/000-default.conf
-      sudo service apache2 restart
-      echo '<!doctype html><html><body><h1>lbs1priv</h1></body></html>' | tee /var/www/html/index.html
-      EOF"
-lbs1ip=$(gcloud compute instances list | grep lbs1priv | awk '{ print $4 }' | tail -1)
+    --metadata-from-file startup-script="capstone/lbsallow.sh"
+
 gcloud compute instances create pgpriv  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -84,7 +78,7 @@ gcloud compute instances create pgpriv  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs1-subnet \
     --metadata-from-file startup-script="capstone/pgpriv"    
-pgip=$(gcloud compute instances list | grep pgpriv | awk '{ print $4 }' | tail -1)
+
 gcloud compute instances create nfspriv  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -93,7 +87,8 @@ gcloud compute instances create nfspriv  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs1-subnet \
     --metadata-from-file startup-script="capstone/nfspriv"
-nfsip=$(gcloud compute instances list | grep nfspriv | awk '{ print $4 }' | tail -1)
+
+
 gcloud compute instances create ldappriv  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -102,7 +97,7 @@ gcloud compute instances create ldappriv  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs1-subnet \
     --metadata-from-file startup-script="capstone/ldappriv"
-ldapip=$(gcloud compute instances list | grep ldappriv | awk '{ print $4 }' | tail -1)
+
 gcloud compute instances create nagpriv  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -111,21 +106,14 @@ gcloud compute instances create nagpriv  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs1-subnet \
     --metadata-from-file startup-script="capstone/nagpriv"
-nagip=$(gcloud compute instances list | grep nagpriv | awk '{ print $4 }' | tail -1)
+
 gcloud compute instances create lbs2pub \
     --image-family debian-8 \
     --image-project debian-cloud \
     --tags tcp-lb \
     --zone us-west1-b \
-    --metadata startup-script="#! /bin/bash
-      sudo apt-get update
-      sudo apt-get install apache2 -y
-      sudo sed -i '/Listen 80/c\Listen 110' /etc/apache2/ports.conf
-      sudo sed -i '/\/c\\' /etc/apache2/sites-enabled/000-default.conf
-      sudo service apache2 restart
-      echo '<!doctype html><html><body><h1>lbs2pub</h1></body></html>' | tee /var/www/html/index.html
-      EOF"
-lbs1ip=$(gcloud compute instances list | grep lbs1priv | awk '{ print $4 }' | tail -1)
+    --metadata-from-file startup-script="capstone/lbsallow.sh"
+
 gcloud compute instances create appublic  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -134,6 +122,7 @@ gcloud compute instances create appublic  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs2-subnet \
     --metadata-from-file startup-script="capstone/appublic"
+    
 gcloud compute instances create djpub1  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -142,6 +131,7 @@ gcloud compute instances create djpub1  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs2-subnet \
     --metadata-from-file startup-script="capstone/djpubs"
+    
 gcloud compute instances create djpub2  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -150,6 +140,7 @@ gcloud compute instances create djpub2  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs2-subnet \
     --metadata-from-file startup-script="capstone/djpubs"
+    
 gcloud compute instances create djpub3  \
     --zone=us-us-west1-b  \
     --machine-type f1-micro \
@@ -158,6 +149,7 @@ gcloud compute instances create djpub3  \
     --tags=allow-ssh,allow-health-check,http-tag,https-tag,tcp-lb \
     --subnet=lbs2-subnet \
     --metadata-from-file startup-script="capstone/djpubs"
+    
 gcloud compute instance-groups unmanaged create lb1priv \
     --zone us-west1-b    
 gcloud compute instance-groups set-named-ports lb1priv \
