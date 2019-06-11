@@ -1,0 +1,119 @@
+#!/bin/bash
+#####################################################################
+################Network and Subnets##################################
+#####################################################################
+gcloud compute networks create lbtpr1 --subnet-mode=custom
+
+gcloud compute networks subnets create lbtpriv1-subnet \
+    --network=lbtpr1 \
+    --range=10.168.3.0 10.168.3.15\
+    --region=west1
+    --zone=west1-b
+    
+gcloud compute networks create lbtpu1-network --subnet-mode=custom
+
+gcloud compute networks subnets create lbtpubl1-subnet \
+    --network=lbtpubl1-network \
+    --range=10.168.4.0 10.168.4.15\
+    --region=us-west1
+    --zone=us-west1-b
+#####################################################################
+################Firewall Rules#######################################
+#####################################################################
+
+
+
+#####################################################################
+################Instances############################################
+#####################################################################
+gcloud compute instances create lbtpriva1 \
+    --image-family debian-9 \
+    --image-project debian-cloud \
+    --region=west1
+    --zone=west1-b \
+    --subnet=lbtpriv1-subnet \
+    --metadata-from-file startup-script="capstone/lbsallow.sh"
+
+gcloud compute instances create pgtpriva1 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --region=west1 \
+    --zone=west1-b \
+    --machine-type f1-micro \
+    --subnet=lbtpriv1-subnet \
+    --metadata-from-file startup-script="capstone/pgpriv" \  
+
+gcloud compute instances create nfspriva1 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --region=west1 \
+    --zone=west1-b \
+    --machine-type f1-micro \
+    --subnet=lbtpriv1-subnet \
+    --metadata-from-file startup-script="capstone/nfspriv"
+
+gcloud compute instances create ldappriva1 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --region=west1 \
+    --zone=west1-b \
+    --machine-type f1-micro \
+    --subnet=lbtpriv1-subnet \
+    --metadata-from-file startup-script="capstone/ldappriv"
+
+gcloud compute instances create nagpriva1 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --region=west1 \
+    --zone=west1-b \
+    --machine-type f1-micro \
+    --subnet=lbtpriv1-subnet \
+    --metadata-from-file startup-script="capstone/nagpriv"
+
+gcloud compute instances create lbtpubli1 \
+    --image-family debian-9 \
+    --image-project debian-cloud \
+    --region=west1
+    --zone=west1-b \
+    --subnet=lbtpubl1-subnet \
+    --metadata-from-file startup-script="capstone/lbsallow.sh"
+
+gcloud compute instances create appubli1 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --region=west1 \
+    --zone=us-us-west1-b  \
+    --machine-type f1-micro \
+    --subnet=lbtpubl1-subnet \
+    --metadata-from-file startup-script="capstone/appublic"
+    
+gcloud compute instances create djpub1_1 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --region=west1 \
+    --zone=us-us-west1-b  \
+    --machine-type f1-micro \
+    --subnet=lbtpubl1-subnet \
+    --metadata-from-file startup-script="capstone/djpubs"
+    
+gcloud compute instances create djpub2_2 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --region=west1 \
+    --zone=us-us-west1-b  \
+    --machine-type f1-micro \
+    --subnet=lbtpubl1-subnet \
+    --metadata-from-file startup-script="capstone/djpubs"
+    
+gcloud compute instances create djpub3  \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --region=west1 \
+    --zone=us-us-west1-b  \
+    --machine-type f1-micro \
+    --subnet=lbtpubl1-subnet \
+    --metadata-from-file startup-script="capstone/djpubs"
+
+#####################################################################
+#####################################################################
+#####################################################################
