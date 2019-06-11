@@ -1,14 +1,21 @@
 #!/bin/bash
 
-git clone https://github.com/passwordlandia/capstone.git
+gcloud compute networks create lbt1-network --subnet-mode=custom
 
-gcloud compute networks create lobatest-network --subnet-mode=custom
-
-gcloud compute networks subnets create lbtest-subnet \
+gcloud compute networks subnets create lbtpriv-subnet \
     --network=lbs1priv-network \
     --range=10.168.0.0 10.168.0.15\
     --region=us-west1
     --zone=us-west1-b
+    
+gcloud compute networks create lbt2-network --subnet-mode=custom
+
+gcloud compute networks subnets create lbtpub-subnet \
+    --network=lbs1priv-network \
+    --range=10.168.0.0 10.168.0.15\
+    --region=us-west1
+    --zone=us-west1-b
+
 
 gcloud compute firewall-rules create www-firewall \
     --target-tags http-tag --allow tcp:80
