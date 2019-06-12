@@ -4,154 +4,205 @@
 #####################################################################
 gcloud compute networks create lbtpriv1 --subnet-mode=custom
 
-gcloud compute networks subnets create lbtpr1-subnet \
+gcloud compute networks subnets create lbtpriv1-subnet \
     --network=lbtpriv1 \
     --range=10.168.3.0/24 10.168.3.15/24 \
-    --region=west1 \
-    --zone=us-west1-b
-    
+    --region=us-west1 \
+
 gcloud compute networks create lbtpubl2 --subnet-mode=custom
 
-gcloud compute networks subnets create lbtpu2-subnet \
+gcloud compute networks subnets create lbtpubl2-subnet \
     --network=lbtpubl2 \
     --range=10.168.4.0/24 10.168.4.15/24 \
     --region=us-west1 \
-    --zone=us-west1-b
 #####################################################################
 ################Firewall Allow Rules#################################
 #####################################################################
-gcloud compute firewall-rules allow-privports1 \
+gcloud compute firewall-rules create allow-privports1 \
     --network=lbtpriv1 \
     --target-tags-privports1 \
-    --allow=tcp:80,110,5432,8000 \
-    
-gcloud compute firewall-rules allow-pubports2 \
+    --allow=tcp:80,110,5432,8000,8080
+
+gcloud compute firewall-rules create allow-lbtpriv1-and-health \
+     --source-ranges 130.211.0.0/22,35.191.0.0/16 \
+     --target-tags lbtpriv1 \
+     --allow tcp:110
+
+gcloud compute firewall-rules create allow-pubports2 \
     --network=lbtpubl2 \
     --target-tags-pubports2 \
-    --allow=tcp:80,110,5432,8000 \
+    --allow=tcp:80,110,5432,8000,8080
 
-gcloud compute firewall-rules allow-lbtpr1-subnet \
+gcloud compute firewall-rules create allow-8s \
+    --network=lbtpubl2 \
+    --target-tags-allow-8s \
+    --allow=tcp:8000,8080,80
+
+gcloud compute firewall-rules create allow-lbtpriv1-subnet \
     --network=lbtpriv1 \
     --action=allow \
     --direction=ingress \
-    --source-ranges=10.168.3.3/24 10.168.0.15/24 \
+    --source-ranges=10.168.3.3/24 10.168.3.15/24 \
     --rules=tcp
-    
-gcloud compute firewall-rules allow-lbtpr1-subnet \
+
+gcloud compute firewall-rules create allow-lbtpubl2-subnet \
     --network=lbtpubl2 \
     --action=allow \
     --direction=egress \
-    --source-ranges=10.168.4.3/ to 10.168.4.15 \
+    --source-ranges=10.168.4.3/ 10.168.4.15 \
     --rules=tcp
-
 #####################################################################
 ################Instances############################################
 #####################################################################
 gcloud compute instances create lbtpriva1 \
     --image-family debian-9 \
     --image-project debian-cloud \
-    --region=west1
     --zone=us-west1-b \
-    --subnet=lbtpr1-subnet \
-    --tags="privports1"
+    --subnet=lbtpriv1-subnet \
+    --tags=privports1,lbtpriv1 \
     --metadata-from-file startup-script="capstone/lbsallow.sh"
 
 gcloud compute instances create pgtpriva1 \
     --image-family centos-7 \
     --image-project centos-cloud \
-    --region=west1 \
     --zone=us-west1-b \
     --machine-type f1-micro \
-    --subnet=lbtpr1-subnet \
-    --tags=http,https
-    --metadata-from-file startup-script="capstone/pgpriv" \  
+    --subnet=lbtpriv1-subnet \
+    --tags=privports1,lbtpriv1 \
+    --metadata-from-file startup-script="capstone/pgpriv" \
 
 gcloud compute instances create nfspriva1 \
     --image-family centos-7 \
     --image-project centos-cloud \
-    --region=west1 \
     --zone=us-west1-b \
     --machine-type f1-micro \
-    --subnet=lbtpr1-subnet \
-    --tags=http,https
+    --subnet=lbtpriv1-subnet \
+    --tags=http,https \
     --metadata-from-file startup-script="capstone/nfspriv"
 
 gcloud compute instances create ldappriva1 \
     --image-family centos-7 \
     --image-project centos-cloud \
-    --region=west1 \
     --zone=us-west1-b \
     --machine-type f1-micro \
-    --subnet=lbtpr1-subnet \
-    --tags=http,https
+    --subnet=lbtpriv1-subnet \
+    --tags=http,https \
     --metadata-from-file startup-script="capstone/ldappriv"
 
 gcloud compute instances create nagpriva1 \
     --image-family centos-7 \
     --image-project centos-cloud \
-    --region=west1 \
     --zone=us-west1-b \
     --machine-type f1-micro \
-    --subnet=lbtpr1-subnet \
-    --tags=http,https
+    --subnet=lbtpriv1-subnet \
+    --tags=http,https \
     --metadata-from-file startup-script="capstone/nagpriv"
 
 gcloud compute instances create lbtpubli2 \
     --image-family debian-9 \
     --image-project debian-cloud \
-    --region=west1
     --zone=us-west1-b \
-    --subnet=lbtpu2-subnet \
-    --tags=pubports2,
+    --subnet=lbtpubl2-subnet \
+    --tags=pubports2,lbtpubl2 \
     --metadata-from-file startup-script="capstone/lbsallow.sh"
 
 gcloud compute instances create appubli2 \
     --image-family centos-7 \
     --image-project centos-cloud \
-    --region=west1 \
     --zone=us-west1-b  \
     --machine-type f1-micro \
-    --subnet=lbtpu2-subnet \
+    --subnet=lbtpubl2-subnet \
+    --tags=http,https,allow-8s \
     --metadata-from-file startup-script="capstone/appublic"
-    
-gcloud compute instances create djpubli1_1 \
+
+gcloud compute instances create djpubli2_1 \
     --image-family centos-7 \
     --image-project centos-cloud \
-    --region=west1 \
     --zone=us-west1-b  \
     --machine-type f1-micro \
-    --subnet=lbtpu2-subnet \
-    --metadata-from-file startup-script="capstone/djpubs"
-    
-gcloud compute instances create djpubli1_2 \
-    --image-family centos-7 \
-    --image-project centos-cloud \
-    --region=west1 \
-    --zone=us-west1-b  \
-    --machine-type f1-micro \
-    --subnet=lbtpu2-subnet \
-    --metadata-from-file startup-script="capstone/djpubs"
-    
-gcloud compute instances create djpubli1_3  \
-    --image-family centos-7 \
-    --image-project centos-cloud \
-    --region=west1 \
-    --zone=us-west1-b  \
-    --machine-type f1-micro \
-    --subnet=lbtpu2-subnet \
+    --subnet=http,https,allow-8s \
     --metadata-from-file startup-script="capstone/djpubs"
 
+gcloud compute instances create djpubli2_2 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --zone=us-west1-b  \
+    --machine-type f1-micro \
+    --subnet=http,https,allow-8s \
+    --metadata-from-file startup-script="capstone/djpubs"
+
+gcloud compute instances create djpubli2_3  \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --zone=us-west1-b  \
+    --machine-type f1-micro \
+    --subnet=http,https,allow-8s \
+    --metadata-from-file startup-script="capstone/djpubs"
 #####################################################################
-##################Instance groups####################################
+######Instance groups, health check and backend services#############
 #####################################################################
-gcloud compute instance-groups unmanaged create privtest1 \
+gcloud compute instance-groups unmanaged create lbtpriv1 \
     --zone=us west1-b
-gcloud compute instance-groups set-named-ports privtest1 \
+
+gcloud compute instance-groups set-named-ports lbtpriv1 \
     --named-ports tcp110:110 \
     --zone us-west1-b
 
-gcloud compute instance-groups unmanaged create pubtest1 \
+gcloud compute instance-groups unmanaged create lbtpubl2 \
     --zone=us-west1-b
-gcloud compute instance-groups set-named-ports pubtest1 \
+
+gcloud compute instance-groups set-named-ports lbtpubl2 \
     --named-ports tcp110:110 \
     --zone us-west1-b
+
+gcloud compute health-checks create tcp lbtpriv1-health-check --port 110
+
+gcloud compute http-health-checks create basic-check
+
+gcloud compute backend-services create lbtpriv1-bes \
+    --global \
+    --protocol TCP \
+    --health-checks lbtpriv1-health-check \
+    --timeout 5m \
+    --port-name tcp110
+    
+gcloud compute backend-services add-backend lbtpriv1-bes\
+    --global \
+    --instance-group lbtpriv1 \
+    --instance-group-zone us-west1-b \
+    --balancing-mode UTILIZATION \
+    --max-utilization 0.8
+
+gcloud compute backend-services add-backend lbtpriv1-bes\
+    --global \
+    --instance-group lbtpubl2 \
+    --instance-group-zone us-west1-b \
+    --balancing-mode UTILIZATION \
+    --max-utilization 0.8
+
+gcloud compute target-tcp-proxies create lbtpriv1-target-proxy \
+    --backend-service lbtpriv1-bes \
+    --proxy-header NONE
+
+gcloud compute addresses create lbtpriv1-static-ipv4 \
+    --ip-version=IPV4 \
+    --global
+
+gcloud beta compute forwarding-rules create lbtpriv1-ipv4-forwarding-rule \
+    --global \
+    --target-tcp-proxy lbtpriv1-target-proxy \
+    --address 10.168.3.4/24 \
+    --ports 110
+######################This is for my 2nd lb###########################################
+gcloud compute target-pools create lbtpubl2-pool \
+    --region us-west1 --http-health-check basic-check
+    
+gcloud compute target-pools add-instances www-pool \
+    --instances appubli2,djpubli2_1,djpubli2_2,djpubli2_3 \
+    --instances-zone us-west1-b
+
+gcloud compute forwarding-rules create lbtpubl2-rule \
+    --region us-west1 \
+    --ports 80 \
+    --address network-lb-ip-1 \
+    --target-pool www-pool
