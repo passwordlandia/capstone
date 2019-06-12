@@ -69,7 +69,7 @@ gcloud compute instances create pgtpriva1 \
     --machine-type f1-micro \
     --subnet=lbtpriv1-subnet \
     --tags=privports1,lbtpriv1 \
-    --metadata-from-file startup-script="capstone/pgpriv" \
+    --metadata-from-file startup-script="capstone/pgpriv.sh" \
 
 gcloud compute instances create nfspriva1 \
     --image-family centos-7 \
@@ -78,7 +78,7 @@ gcloud compute instances create nfspriva1 \
     --machine-type f1-micro \
     --subnet=lbtpriv1-subnet \
     --tags=http,https \
-    --metadata-from-file startup-script="capstone/nfspriv"
+    --metadata-from-file startup-script="capstone/nfspriv.sh"
 
 gcloud compute instances create ldappriva1 \
     --image-family centos-7 \
@@ -87,7 +87,7 @@ gcloud compute instances create ldappriva1 \
     --machine-type f1-micro \
     --subnet=lbtpriv1-subnet \
     --tags=http,https \
-    --metadata-from-file startup-script="capstone/ldappriv"
+    --metadata-from-file startup-script="capstone/ldappriv.sh"
 
 gcloud compute instances create nagpriva1 \
     --image-family centos-7 \
@@ -96,7 +96,7 @@ gcloud compute instances create nagpriva1 \
     --machine-type f1-micro \
     --subnet=lbtpriv1-subnet \
     --tags=http,https \
-    --metadata-from-file startup-script="capstone/nagpriv"
+    --metadata-from-file startup-script="capstone/nagpriv.sh"
 
 gcloud compute instances create lbtpubli2 \
     --image-family debian-9 \
@@ -113,7 +113,7 @@ gcloud compute instances create appubli2 \
     --machine-type f1-micro \
     --subnet=lbtpubl2-subnet \
     --tags=http,https,allow-8s \
-    --metadata-from-file startup-script="capstone/appublic"
+    --metadata-from-file startup-script="capstone/appublic.sh"
 
 gcloud compute instances create djpubli2_1 \
     --image-family centos-7 \
@@ -121,7 +121,7 @@ gcloud compute instances create djpubli2_1 \
     --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=http,https,allow-8s \
-    --metadata-from-file startup-script="capstone/djpubs"
+    --metadata-from-file startup-script="capstone/djpubs.sh"
 
 gcloud compute instances create djpubli2_2 \
     --image-family centos-7 \
@@ -129,7 +129,7 @@ gcloud compute instances create djpubli2_2 \
     --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=http,https,allow-8s \
-    --metadata-from-file startup-script="capstone/djpubs"
+    --metadata-from-file startup-script="capstone/djpubs.sh"
 
 gcloud compute instances create djpubli2_3  \
     --image-family centos-7 \
@@ -137,7 +137,7 @@ gcloud compute instances create djpubli2_3  \
     --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=http,https,allow-8s \
-    --metadata-from-file startup-script="capstone/djpubs"
+    --metadata-from-file startup-script="capstone/djpubs.sh"
 #####################################################################
 ######Instance groups, health check and backend services#############
 #####################################################################
