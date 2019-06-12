@@ -8,7 +8,7 @@ gcloud compute networks subnets create lbtpr1-subnet \
     --network=lbtpriv1 \
     --range=10.168.3.0/24 10.168.3.15/24 \
     --region=west1 \
-    --zone=west1-b
+    --zone=us-west1-b
     
 gcloud compute networks create lbtpubl2 --subnet-mode=custom
 
@@ -51,7 +51,7 @@ gcloud compute instances create lbtpriva1 \
     --image-family debian-9 \
     --image-project debian-cloud \
     --region=west1
-    --zone=west1-b \
+    --zone=us-west1-b \
     --subnet=lbtpr1-subnet \
     --tags="privports1"
     --metadata-from-file startup-script="capstone/lbsallow.sh"
@@ -60,7 +60,7 @@ gcloud compute instances create pgtpriva1 \
     --image-family centos-7 \
     --image-project centos-cloud \
     --region=west1 \
-    --zone=west1-b \
+    --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags=http,https
@@ -70,7 +70,7 @@ gcloud compute instances create nfspriva1 \
     --image-family centos-7 \
     --image-project centos-cloud \
     --region=west1 \
-    --zone=west1-b \
+    --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags=http,https
@@ -80,7 +80,7 @@ gcloud compute instances create ldappriva1 \
     --image-family centos-7 \
     --image-project centos-cloud \
     --region=west1 \
-    --zone=west1-b \
+    --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags=http,https
@@ -90,7 +90,7 @@ gcloud compute instances create nagpriva1 \
     --image-family centos-7 \
     --image-project centos-cloud \
     --region=west1 \
-    --zone=west1-b \
+    --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags=http,https
@@ -100,7 +100,7 @@ gcloud compute instances create lbtpubli2 \
     --image-family debian-9 \
     --image-project debian-cloud \
     --region=west1
-    --zone=west1-b \
+    --zone=us-west1-b \
     --subnet=lbtpu2-subnet \
     --tags=pubports2,
     --metadata-from-file startup-script="capstone/lbsallow.sh"
@@ -109,7 +109,7 @@ gcloud compute instances create appubli2 \
     --image-family centos-7 \
     --image-project centos-cloud \
     --region=west1 \
-    --zone=us-us-west1-b  \
+    --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --metadata-from-file startup-script="capstone/appublic"
@@ -118,7 +118,7 @@ gcloud compute instances create djpubli1_1 \
     --image-family centos-7 \
     --image-project centos-cloud \
     --region=west1 \
-    --zone=us-us-west1-b  \
+    --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --metadata-from-file startup-script="capstone/djpubs"
@@ -127,7 +127,7 @@ gcloud compute instances create djpubli1_2 \
     --image-family centos-7 \
     --image-project centos-cloud \
     --region=west1 \
-    --zone=us-us-west1-b  \
+    --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --metadata-from-file startup-script="capstone/djpubs"
@@ -136,11 +136,22 @@ gcloud compute instances create djpubli1_3  \
     --image-family centos-7 \
     --image-project centos-cloud \
     --region=west1 \
-    --zone=us-us-west1-b  \
+    --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --metadata-from-file startup-script="capstone/djpubs"
 
 #####################################################################
+##################Instance groups####################################
 #####################################################################
-#####################################################################
+gcloud compute instance-groups unmanaged create privtest1 \
+    --zone=us west1-b
+gcloud compute instance-groups set-named-ports privtest1 \
+    --named-ports tcp110:110 \
+    --zone us-west1-b
+
+gcloud compute instance-groups unmanaged create pubtest1 \
+    --zone=us-west1-b
+gcloud compute instance-groups set-named-ports pubtest1 \
+    --named-ports tcp110:110 \
+    --zone us-west1-b
