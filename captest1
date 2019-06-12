@@ -205,4 +205,4 @@ gcloud compute forwarding-rules create lbtpubl2-rule \
     --region us-west1 \
     --ports 80 \
     --address network-lbtpubl2 \
-    --target-pool www-pool
+    --target-pool lbtpubl2-pool
