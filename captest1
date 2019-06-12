@@ -197,12 +197,12 @@ gcloud beta compute forwarding-rules create lbtpriv1-ipv4-forwarding-rule \
 gcloud compute target-pools create lbtpubl2-pool \
     --region us-west1 --http-health-check basic-check
     
-gcloud compute target-pools add-instances www-pool \
+gcloud compute target-pools add-instances lbtpubl2-pool \
     --instances appubli2,djpubli2_1,djpubli2_2,djpubli2_3 \
     --instances-zone us-west1-b
 
 gcloud compute forwarding-rules create lbtpubl2-rule \
     --region us-west1 \
     --ports 80 \
-    --address network-lb-ip-1 \
+    --address network-lbtpubl2 \
     --target-pool www-pool
