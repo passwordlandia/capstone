@@ -3,15 +3,17 @@
 ################Network and Subnets##################################
 #####################################################################
 gcloud compute networks create lbtpriv1 --subnet-mode=custom
-gcloud compute networks subnets create lbtpriv1-subnet \
+
+gcloud compute networks subnets create lbtpr1-subnet \
     --network=lbtpriv1 \
-    --range=10.138.1.2 10.138.1.15 \
+    --range=10.138.0.0/20 \
     --region=us-west1 \
 
 gcloud compute networks create lbtpubl2 --subnet-mode=custom
-gcloud compute networks subnets create lbtpubl2-subnet \
+
+gcloud compute networks subnets create lbtpu2-subnet \
     --network=lbtpubl2 \
-    --range=10.138.2.2 10.138.2.15\
+    --range=10.138.2.0/20 \
     --region=us-west1 \
 #####################################################################
 ################Firewall Allow Rules#################################
@@ -36,18 +38,18 @@ gcloud compute firewall-rules create allow-8s \
     --target-tags=allow-8s \
     --allow=tcp:8000,8080,80
 
-gcloud compute firewall-rules create allow-lbtpriv1-subnet \
+gcloud compute firewall-rules create allow-lbtpr1-subnet \
     --network=lbtpriv1 \
     --action=allow \
     --direction=ingress \
-    --source-ranges=10.138.1.2 10.138.1.15\
+    --source-ranges=10.138.1.0/20 \
     --rules=tcp
 
-gcloud compute firewall-rules create allow-lbtpubl2-subnet \
+gcloud compute firewall-rules create allow-lbtpu2-subnet \
     --network=lbtpubl2 \
     --action=allow \
     --direction=egress \
-    --source-ranges=10.138.2.2 10.138.2.15\
+    --source-ranges=10.138.2.0/20 \
     --rules=tcp
 #####################################################################
 ################Instances############################################
@@ -56,7 +58,7 @@ gcloud compute instances create lbtpriva1 \
     --image-family debian-9 \
     --image-project debian-cloud \
     --zone=us-west1-b \
-    --subnet=lbtpriv1-subnet \
+    --subnet=lbtpr1-subnet \
     --tags=privports1,lbtpriv1 \
     --metadata-from-file startup-script="capstone/lbsallow.sh"
 
@@ -65,7 +67,7 @@ gcloud compute instances create pgtpriva1 \
     --image-project centos-cloud \
     --zone=us-west1-b \
     --machine-type f1-micro \
-    --subnet=lbtpriv1-subnet \
+    --subnet=lbtpr1-subnet \
     --tags=privports1,lbtpriv1 \
     --metadata-from-file startup-script="capstone/pgpriv.sh" \
 
@@ -74,7 +76,7 @@ gcloud compute instances create nfspriva1 \
     --image-project centos-cloud \
     --zone=us-west1-b \
     --machine-type f1-micro \
-    --subnet=lbtpriv1-subnet \
+    --subnet=lbtpr1-subnet \
     --tags=http,https \
     --metadata-from-file startup-script="capstone/nfspriv.sh"
 
@@ -83,7 +85,7 @@ gcloud compute instances create ldappriva1 \
     --image-project centos-cloud \
     --zone=us-west1-b \
     --machine-type f1-micro \
-    --subnet=lbtpriv1-subnet \
+    --subnet=lbtpr1-subnet \
     --tags=http,https \
     --metadata-from-file startup-script="capstone/ldappriv.sh"
 
@@ -92,7 +94,7 @@ gcloud compute instances create nagpriva1 \
     --image-project centos-cloud \
     --zone=us-west1-b \
     --machine-type f1-micro \
-    --subnet=lbtpriv1-subnet \
+    --subnet=lbtpr1-subnet \
     --tags=http,https \
     --metadata-from-file startup-script="capstone/nagpriv.sh"
 
@@ -100,7 +102,7 @@ gcloud compute instances create lbtpubli2 \
     --image-family debian-9 \
     --image-project debian-cloud \
     --zone=us-west1-b \
-    --subnet=lbtpubl2-subnet \
+    --subnet=lbtpu2-subnet \
     --tags=pubports2,lbtpubl2 \
     --metadata-from-file startup-script="capstone/lbsallow.sh"
 
@@ -109,7 +111,7 @@ gcloud compute instances create appubli2 \
     --image-project centos-cloud \
     --zone=us-west1-b  \
     --machine-type f1-micro \
-    --subnet=lbtpubl2-subnet \
+    --subnet=lbtpu2-subnet \
     --tags=http,https,allow-8s \
     --metadata-from-file startup-script="capstone/appublic.sh"
 
