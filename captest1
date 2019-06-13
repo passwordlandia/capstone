@@ -6,7 +6,7 @@ gcloud compute networks create lbtpriv1 --subnet-mode=custom
 
 gcloud compute networks subnets create lbtpr1-subnet \
     --network=lbtpriv1 \
-    --range=10.138.0.0/20 \
+    --range=10.138.1.0/20 \
     --region=us-west1 \
 
 gcloud compute networks create lbtpubl2 --subnet-mode=custom
