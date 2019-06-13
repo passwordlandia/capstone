@@ -6,14 +6,14 @@ gcloud compute networks create lbtpriv1 --subnet-mode=custom
 
 gcloud compute networks subnets create lbtpriv1-subnet \
     --network=lbtpriv1 \
-    --range=10.168.3.0/24 10.168.3.15/24 \
+    --range=10.168.3.0 10.168.3.15 \
     --region=us-west1 \
 
 gcloud compute networks create lbtpubl2 --subnet-mode=custom
 
 gcloud compute networks subnets create lbtpubl2-subnet \
     --network=lbtpubl2 \
-    --range=10.168.4.0/24 10.168.4.15/24 \
+    --range=10.168.4.0 10.168.4.15 \
     --region=us-west1 \
 #####################################################################
 ################Firewall Allow Rules#################################
@@ -42,14 +42,14 @@ gcloud compute firewall-rules create allow-lbtpriv1-subnet \
     --network=lbtpriv1 \
     --action=allow \
     --direction=ingress \
-    --source-ranges=10.168.3.0/24 10.168.3.15/24 \
+    --source-ranges=10.168.3.0 10.168.3.15 \
     --rules=tcp
 
 gcloud compute firewall-rules create allow-lbtpubl2-subnet \
     --network=lbtpubl2 \
     --action=allow \
     --direction=egress \
-    --source-ranges=10.168.4.0/ 10.168.4.15 \
+    --source-ranges=10.168.4.0 10.168.4.15 \
     --rules=tcp
 #####################################################################
 ################Instances############################################
@@ -191,7 +191,7 @@ gcloud compute addresses create lbtpriv1-static-ipv4 \
 gcloud beta compute forwarding-rules create lbtpriv1-ipv4-forwarding-rule \
     --global \
     --target-tcp-proxy lbtpriv1-target-proxy \
-    --address 10.168.3.2/24 \
+    --address 10.168.3.2 \
     --ports 110
 ######################This is for my 2nd lb###########################################
 gcloud compute target-pools create lbtpubl2-pool \
