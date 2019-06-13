@@ -3,14 +3,12 @@
 ################Network and Subnets##################################
 #####################################################################
 gcloud compute networks create lbtpriv1 --subnet-mode=custom
-
 gcloud compute networks subnets create lbtpriv1-subnet \
     --network=lbtpriv1 \
     --range=10.168.3.0 10.168.3.15 \
     --region=us-west1 \
 
 gcloud compute networks create lbtpubl2 --subnet-mode=custom
-
 gcloud compute networks subnets create lbtpubl2-subnet \
     --network=lbtpubl2 \
     --range=10.168.4.0 10.168.4.15 \
@@ -20,22 +18,22 @@ gcloud compute networks subnets create lbtpubl2-subnet \
 #####################################################################
 gcloud compute firewall-rules create allow-privports1 \
     --network=lbtpriv1 \
-    --target-tags-privports1 \
+    --target-tags=privports1 \
     --allow=tcp:80,110,5432,8000,8080
 
 gcloud compute firewall-rules create allow-lbtpriv1-and-health \
-     --source-ranges 130.211.0.0/22,35.191.0.0/16 \
-     --target-tags lbtpriv1 \
+     --source-ranges=130.211.0.0/22,35.191.0.0/16 \
+     --target-tags=lbtpriv1 \
      --allow tcp:110
 
 gcloud compute firewall-rules create allow-pubports2 \
     --network=lbtpubl2 \
-    --target-tags-pubports2 \
+    --target-tags=pubports2 \
     --allow=tcp:80,110,5432,8000,8080
 
 gcloud compute firewall-rules create allow-8s \
     --network=lbtpubl2 \
-    --target-tags-allow-8s \
+    --target-tags=allow-8s \
     --allow=tcp:8000,8080,80
 
 gcloud compute firewall-rules create allow-lbtpriv1-subnet \
@@ -146,14 +144,14 @@ gcloud compute instance-groups unmanaged create lbtpriv1 \
 
 gcloud compute instance-groups set-named-ports lbtpriv1 \
     --named-ports tcp110:110 \
-    --zone us-west1-b
+    --zone=us-west1-b
 
 gcloud compute instance-groups unmanaged create lbtpubl2 \
     --zone=us-west1-b
 
 gcloud compute instance-groups set-named-ports lbtpubl2 \
     --named-ports tcp110:110 \
-    --zone us-west1-b
+    --zone=us-west1-b
 
 gcloud compute health-checks create tcp lbtpriv1-health-check --port 110
 
