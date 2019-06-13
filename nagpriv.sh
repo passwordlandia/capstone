@@ -7,7 +7,7 @@ systemctl start nagios
 
 setenforce 0
 
-sed -i 's/allowed_hosts=127.0.0.1/allowed_hosts=127.0.0.1, 10.168.0.3/g' /etc/nagios/nrpe.cfg
+sed -i 's/allowed_hosts=127.0.0.1/allowed_hosts=127.0.0.1, 10.138.1.2/g' /etc/nagios/nrpe.cfg
 
 
 yum install -y httpd
