@@ -6,14 +6,14 @@ gcloud compute networks create lbtpriv1 --subnet-mode=custom
 
 gcloud compute networks subnets create lbtpr1-subnet \
     --network=lbtpriv1 \
-    --range=10.138.1.0/20 \
+    --range=10.138.1.2/20 \
     --region=us-west1 \
 
 gcloud compute networks create lbtpubl2 --subnet-mode=custom
 
 gcloud compute networks subnets create lbtpu2-subnet \
     --network=lbtpubl2 \
-    --range=10.138.2.0/20 \
+    --range=10.138.2.2/20 \
     --region=us-west1 \
 #####################################################################
 ################Firewall Allow Rules#################################
@@ -42,14 +42,14 @@ gcloud compute firewall-rules create allow-lbtpr1-subnet \
     --network=lbtpriv1 \
     --action=allow \
     --direction=ingress \
-    --source-ranges=10.138.1.0/20 \
+    --source-ranges=10.138.1.2/20 \
     --rules=tcp
 
 gcloud compute firewall-rules create allow-lbtpu2-subnet \
     --network=lbtpubl2 \
     --action=allow \
     --direction=egress \
-    --source-ranges=10.138.2.0/20 \
+    --source-ranges=10.138.2.2/20 \
     --rules=tcp
 #####################################################################
 ################Instances############################################
