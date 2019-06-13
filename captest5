@@ -49,7 +49,7 @@ gcloud compute firewall-rules create allow-lbtpu2-subnet \
     --network=lbtpubl2 \
     --action=allow \
     --direction=egress \
-    --source-ranges=10.138.2.0/24 \
+    --destination-ranges=10.138.1.0/24 \
     --rules=tcp
 #####################################################################
 ################Instances############################################
