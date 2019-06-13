@@ -155,14 +155,14 @@ gcloud compute instance-groups set-named-ports lbtpu2 \
 
 gcloud compute health-checks create tcp lbtpriv1-health-check --port 110
 
-gcloud compute backend-services create lbtpr1-bes \
+gcloud compute backend-services create lbtpriv1-bes \
     --global \
     --protocol TCP \
-    --health-checks lbtpr1-health-check \
+    --health-checks lbtpriv1-health-check \
     --timeout 5m \
     --port-name tcp110
     
-gcloud compute backend-services add-backend lbtpr1-bes\
+gcloud compute backend-services add-backend lbtpriv1-bes\
     --global \
     --instance-group lbtpr1 \
     --instance-group-zone us-west1-b \
@@ -187,20 +187,19 @@ gcloud compute addresses create lbtpr1-static-ipv4 \
 gcloud beta compute forwarding-rules create lbtpr1-ipv4-forwarding-rule \
     --global \
     --target-tcp-proxy lbtpr1-target-proxy \
-    --address 10.138.1.3/24 \
+    --address lbtpr1-static-ipv4 \
     --ports 110
 ######################This is for my 2nd lb###########################################
 gcloud compute http-health-checks create basic-check
 
 gcloud compute addresses create lbtpubl2 \
-    --region us-west1
+    --region=us-west1
 
 gcloud compute target-pools create lbtpubl2-pool \
     --region=us-west1 --http-health-check basic-check
     
 gcloud compute target-pools add-instances lbtpubl2-pool \
     --instances appubli2,djpubli1,djpubli2,djpubli3 \
-    --instances=zone us-west1-b
 
 gcloud compute forwarding-rules create lbtpu2-rule \
     --region=us-west1 \
