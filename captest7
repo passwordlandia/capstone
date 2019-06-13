@@ -137,7 +137,7 @@ gcloud compute instances create djpubli2_3  \
 ######Instance groups, health check and backend services#############
 #####################################################################
 gcloud compute instance-groups unmanaged create lbtpr1 \
-    --zone=us west1-b
+    --zone=us-west1-b
 
 gcloud compute instance-groups set-named-ports lbtpr1 \
     --named-ports tcp110:110 \
