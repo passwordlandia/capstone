@@ -33,11 +33,6 @@ gcloud compute firewall-rules create allow-pubports2 \
     --target-tags=pubports2 \
     --allow=tcp:80,110
 
-gcloud compute firewall-rules create allow-8s \
-    --network=lbtpubl2 \
-    --target-tags=allow-8s \
-    --rules=http:8000,https:443
-
 gcloud compute firewall-rules create allow-lbtpr1-subnet \
     --network=lbtpriv1 \
     --action=allow \
@@ -60,7 +55,7 @@ gcloud compute instances create lbtpriva1 \
     --zone=us-west1-b \
     --subnet=lbtpr1-subnet \
     --tags=privports1,lbtpriv1 \
-    --metadata-from-file startup-script=lbprivate.sh
+    --metadata-from-file startup-script="/home/jam198604/lbprivate.sh"
 
 gcloud compute instances create pgtpriva1 \
     --image-family centos-7 \
@@ -69,7 +64,7 @@ gcloud compute instances create pgtpriva1 \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags=privports1,lbtpriv1 \
-    --metadata-from-file startup-script=pgpriv.sh
+    --metadata-from-file startup-script="/home/jam198604/pgpriv.sh"
 
 gcloud compute instances create nfspriva1 \
     --image-family centos-7 \
@@ -78,7 +73,7 @@ gcloud compute instances create nfspriva1 \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags=http,https \
-    --metadata-from-file startup-script=nfspriv.sh
+    --metadata-from-file startup-script="/home/jam198604/nfspriv.sh"
 
 gcloud compute instances create ldappriva1 \
     --image-family centos-7 \
@@ -87,7 +82,7 @@ gcloud compute instances create ldappriva1 \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags=http,https \
-    --metadata-from-file startup-script=ldappriv.sh
+    --metadata-from-file startup-script="/home/jam198604/ldappriv.sh"
 
 gcloud compute instances create nagpriva1 \
     --image-family centos-7 \
@@ -96,7 +91,7 @@ gcloud compute instances create nagpriva1 \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags=http,https \
-    --metadata-from-file startup-script=nagpriv.sh
+    --metadata-from-file startup-script="/home/jam198604/nagpriv.sh"
 
 gcloud compute instances create lbtpubli2 \
     --image-family debian-9 \
@@ -104,7 +99,7 @@ gcloud compute instances create lbtpubli2 \
     --zone=us-west1-b \
     --subnet=lbtpu2-subnet \
     --tags=pubports2,lbtpubl2 \
-    --metadata-from-file startup-script=lbpublic.sh
+    --metadata-from-file startup-script="/home/jam198604/lbpublic.sh"
 
 gcloud compute instances create appubli2 \
     --image-family centos-7 \
@@ -112,15 +107,15 @@ gcloud compute instances create appubli2 \
     --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
-    --tags=http,https,allow-8s \
-    --metadata-from-file startup-script=appublic.sh
+    --tags=http,https \
+    --metadata-from-file startup-script="/home/jam198604/appublic.sh"
 
 gcloud compute instances create djpubli2_1 \
     --image-family centos-7 \
     --image-project centos-cloud \
     --zone=us-west1-b  \
     --machine-type f1-micro \
-    --subnet=http,https,allow-8s \
+    --subnet=http,https \
     --metadata-from-file startup-script=djpubs.sh
 
 gcloud compute instances create djpubli2_2 \
@@ -128,30 +123,30 @@ gcloud compute instances create djpubli2_2 \
     --image-project centos-cloud \
     --zone=us-west1-b  \
     --machine-type f1-micro \
-    --subnet=http,https,allow-8s \
-    --metadata-from-file startup-script=djpubs.sh
+    --subnet=http,https \
+    --metadata-from-file startup-script="/home/jam198604/djpubs.sh"
 
 gcloud compute instances create djpubli2_3  \
     --image-family centos-7 \
     --image-project centos-cloud \
     --zone=us-west1-b  \
     --machine-type f1-micro \
-    --subnet=http,https,allow-8s \
-    --metadata-from-file startup-script=djpubs.sh
+    --subnet=http,https \
+    --metadata-from-file startup-script="/home/jam198604/djpubs.sh"
 #####################################################################
 ######Instance groups, health check and backend services#############
 #####################################################################
-gcloud compute instance-groups unmanaged create lbtpriv1 \
+gcloud compute instance-groups unmanaged create lbtpr1 \
     --zone=us west1-b
 
-gcloud compute instance-groups set-named-ports lbtpriv1 \
+gcloud compute instance-groups set-named-ports lbtpr1 \
     --named-ports tcp110:110 \
     --zone=us-west1-b
 
-gcloud compute instance-groups unmanaged create lbtpubl2 \
+gcloud compute instance-groups unmanaged create lbtpu2 \
     --zone=us-west1-b
 
-gcloud compute instance-groups set-named-ports lbtpubl2 \
+gcloud compute instance-groups set-named-ports lbtpu2 \
     --named-ports tcp110:110 \
     --zone=us-west1-b
 
