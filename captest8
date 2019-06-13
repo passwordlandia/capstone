@@ -115,7 +115,7 @@ gcloud compute instances create djpubli1 \
     --image-project centos-cloud \
     --zone=us-west1-b  \
     --machine-type f1-micro \
-    --subnet=http,https,lbtpubl2 \
+    --subnet=http,https,lbtpu2 \
     --metadata-from-file startup-script=/home/jam198604/djpubs.sh
 
 gcloud compute instances create djpubli2 \
@@ -123,7 +123,7 @@ gcloud compute instances create djpubli2 \
     --image-project centos-cloud \
     --zone=us-west1-b  \
     --machine-type f1-micro \
-    --subnet=http,https,lbtpubl2 \
+    --subnet=http,https,lbtpu2 \
     --metadata-from-file startup-script=/home/jam198604/djpubs.sh
 
 gcloud compute instances create djpubli3  \
@@ -131,7 +131,7 @@ gcloud compute instances create djpubli3  \
     --image-project centos-cloud \
     --zone=us-west1-b  \
     --machine-type f1-micro \
-    --subnet=http,https,lbtpubl2 \
+    --subnet=http,https,lbtpu2 \
     --metadata-from-file startup-script=/home/jam198604/djpubs.sh
 #####################################################################
 ######Instance groups, health check and backend services#############
