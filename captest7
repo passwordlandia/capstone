@@ -108,7 +108,7 @@ gcloud compute instances create appubli2 \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --tags=http,https,lbtpubl2 \
-    --metadata-from-file startup-script="C:\Users\JAMil\Desktop\Capstone Project\Capstone other\appublic.sh.rtf"
+    --metadata-from-file startup-script=/home/jam198604/appublic.sh
 
 gcloud compute instances create djpubli2_1 \
     --image-family centos-7 \
