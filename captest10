@@ -169,13 +169,6 @@ gcloud compute backend-services add-backend lbtpriv1-bes\
     --balancing-mode UTILIZATION \
     --max-utilization 0.8
 
-gcloud compute backend-services add-backend lbtpu2-bes\
-    --global \
-    --instance-group lbtpu2 \
-    --instance-group-zone us-west1-b \
-    --balancing-mode UTILIZATION \
-    --max-utilization 0.8
-
 gcloud compute target-tcp-proxies create lbtpr1-target-proxy \
     --backend-service lbtpr1-bes \
     --proxy-header NONE
@@ -196,13 +189,13 @@ gcloud compute addresses create lbtpubl2 \
     --region=us-west1
 
 gcloud compute target-pools create lbtpubl2-pool \
-    --region=us-west1-b --http-health-check basic-check
+    --region=us-west1 --http-health-check basic-check
     
 gcloud compute target-pools add-instances lbtpubl2-pool \
     --instances appubli2,djpubli1,djpubli2,djpubli3 \
 
 gcloud compute forwarding-rules create lbtpu2-rule \
-    --region=us-west1-b \
+    --region=us-west1 \
     --ports 80 \
     --address lbtpubl2 \
     --target-pool lbtpubl2-pool
