@@ -169,18 +169,18 @@ gcloud compute backend-services add-backend lbtpriv1-bes\
     --balancing-mode UTILIZATION \
     --max-utilization 0.8
 
-gcloud compute target-tcp-proxies create lbtpr1-target-proxy \
-    --backend-service lbtpr1-bes \
+gcloud compute target-tcp-proxies create lbtpriv1-target-proxy \
+    --backend-service lbtpriv1-bes \
     --proxy-header NONE
 
-gcloud compute addresses create lbtpr1-static-ipv4 \
+gcloud compute addresses create lbtpriv1-static-ipv4 \
     --ip-version=IPV4 \
     --global
 
-gcloud beta compute forwarding-rules create lbtpr1-ipv4-forwarding-rule \
+gcloud beta compute forwarding-rules create lbtpriv1-ipv4-forwarding-rule \
     --global \
-    --target-tcp-proxy lbtpr1-target-proxy \
-    --address lbtpr1-static-ipv4 \
+    --target-tcp-proxy lbtpriv1-target-proxy \
+    --address lbtpriv1-static-ipv4 \
     --ports 110
 ######################This is for my 2nd lb###########################################
 gcloud compute http-health-checks create basic-check
