@@ -196,13 +196,13 @@ gcloud compute addresses create lbtpubl2 \
     --region=us-west1
 
 gcloud compute target-pools create lbtpubl2-pool \
-    --region=us-west1 --http-health-check basic-check
+    --region=us-west1-b --http-health-check basic-check
     
 gcloud compute target-pools add-instances lbtpubl2-pool \
     --instances appubli2,djpubli1,djpubli2,djpubli3 \
 
 gcloud compute forwarding-rules create lbtpu2-rule \
-    --region=us-west1 \
-    --ports 80,110 \
+    --region=us-west1-b \
+    --ports 80 \
     --address lbtpubl2 \
     --target-pool lbtpubl2-pool
