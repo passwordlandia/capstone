@@ -189,7 +189,7 @@ gcloud beta compute forwarding-rules create lbtpr1-ipv4-forwarding-rule \
     --address 10.138.1.2/24 \
     --ports 110
 ######################This is for my 2nd lb###########################################
-gcloud compute target-pools create lbtpubl2-pool \
+gcloud compute target-pools create lbtpu2-pool \
     --region=us-west1 --http-health-check basic-check
     
 gcloud compute target-pools add-instances lbtpu2-pool \
