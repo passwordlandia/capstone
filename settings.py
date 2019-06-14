@@ -79,7 +79,7 @@ DATABASES = {
         'NAME': 'myproject',
         'USER': 'myprojectuser',
         'PASSWORD': 'password',
-        'HOST': 'lbtriva1',
+        'HOST': 'lbtpriva1',
         'PORT': '5432',
     }
 }
