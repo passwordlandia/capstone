@@ -1,7 +1,7 @@
 ldap-auth-config        ldap-auth-config/rootbindpw     password
 ldap-auth-config        ldap-auth-config/bindpw password
 ldap-auth-config        ldap-auth-config/override       boolean true
-ldap-auth-config        ldap-auth-config/ldapns/ldap-server     string  ldap://10.138.1.5
+ldap-auth-config        ldap-auth-config/ldapns/ldap-server     string  ldap://10.138.1.7
 ldap-auth-config        ldap-auth-config/move-to-debconf        boolean true
 ldap-auth-config        ldap-auth-config/ldapns/ldap_version    select  3
 ldap-auth-config        ldap-auth-config/ldapns/base-dn string  dc=itc299,dc=local
