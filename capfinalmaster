@@ -72,7 +72,7 @@ gcloud compute instances create nfspriva1 \
     --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
-    --tags="http","https","lbtpriv1" \
+    --tags="http-server","https-server","lbtpriv1" \
     --metadata-from-file startup-script="/home/jam198604/nfspriv.sh"
 
 gcloud compute instances create ldappriva1 \
@@ -81,7 +81,7 @@ gcloud compute instances create ldappriva1 \
     --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
-    --tags="http","https","lbtpriv1" \
+    --tags="http-server","https-server","lbtpriv1" \
     --metadata-from-file startup-script="/home/jam198604/ldappriv.sh"
 
 gcloud compute instances create nagpriva1 \
@@ -90,7 +90,7 @@ gcloud compute instances create nagpriva1 \
     --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
-    --tags="http","https","lbtpriv1" \
+    --tags="http-server","https-server","lbtpriv1" \
     --metadata-from-file startup-script="/home/jam198604/nagpriv.sh"
 
 gcloud compute instances create lbtpubli2 \
@@ -107,7 +107,7 @@ gcloud compute instances create appubli2 \
     --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
-    --tags="http","https","lbtpubl2" \
+    --tags="http-server","https-server","lbtpubl2" \
     --metadata-from-file startup-script="/home/jam198604/appublic.sh"
 
 gcloud compute instances create djpubli1 \
@@ -116,7 +116,7 @@ gcloud compute instances create djpubli1 \
     --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
-    --tags="http","https","lbtpubl2" \
+    --tags="http-server","https-server","lbtpubl2" \
     --metadata-from-file startup-script="/home/jam198604/djpubs.sh"
 
 gcloud compute instances create djpubli2 \
@@ -125,7 +125,7 @@ gcloud compute instances create djpubli2 \
     --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
-    --tags="http","https","lbtpubl2" \
+    --tags="http-server","https-server","lbtpubl2" \
     --metadata-from-file startup-script="/home/jam198604/djpubs.sh"
 
 gcloud compute instances create djpubli3  \
@@ -134,7 +134,7 @@ gcloud compute instances create djpubli3  \
     --zone=us-west1-b  \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
-    --tags="http","https","lbtpubl2" \
+    --tags="http-server","https-server","lbtpubl2" \
     --metadata-from-file startup-script="/home/jam198604/djpubs.sh"
 #####################################################################
 ######Instance groups, health check and backend services#############
