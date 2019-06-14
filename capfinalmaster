@@ -146,12 +146,20 @@ gcloud compute instance-groups set-named-ports lbtpr1 \
     --named-ports tcp110:110 \
     --zone=us-west1-b
 
+gcloud compute instance-groups unmanaged add-instances lbtpr1 \
+    --instances lbtpriva1,pgtpriva1,nfspriva1,ldappriva1,nagpriva1 \
+    --zone us-west1-b
+
 gcloud compute instance-groups unmanaged create lbtpu2 \
     --zone=us-west1-b
 
 gcloud compute instance-groups set-named-ports lbtpu2 \
     --named-ports tcp110:110 \
     --zone=us-west1-b
+
+gcloud compute instance-groups unmanaged add-instances lbtpu2 \
+    --instances lbtpubli2,appubli2,djpubli1,djpubli2,djpubli3 \
+    --zone us-west1-b
 
 gcloud compute health-checks create tcp lbtpriv1-health-check --port 110
 
