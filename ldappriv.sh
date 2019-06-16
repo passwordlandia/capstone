@@ -58,13 +58,14 @@ olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external, 
 
 ldapmodify -Y EXTERNAL  -H ldapi:/// -f monitor.ldif
 openssl req -new -x509 -nodes -out /etc/openldap/certs/itc299ldapcert.pem -keyout /etc/openldap/certs/itc299ldapkey.pem -days 365 -subj "/C=US/ST=WA/L=Seattle/O=SCC/OU=IT/CN=itc299.local"
+
 chown -R ldap. /etc/openldap/certs/nti*.pem
 
 echo -e "dn: cn=config
 changetype: modify
 replace: olcTLSCertificateFile
 olcTLSCertificateFile: /etc/openldap/certs/itc299ldapcert.pem
-\n
+
 dn: cn=config
 changetype: modify
 replace: olcTLSCertificateKeyFile
@@ -82,22 +83,21 @@ echo -e "dn: dc=itc299,dc=local
 dc: itc299
 objectClass: top
 objectClass: domain
-\n
 dn: cn=ldapadm ,dc=itc299,dc=local
 objectClass: organizationalRole
 cn: ldapadm
 description: LDAP Manager
-\n
 dn: ou=People,dc=itc299,dc=local
 objectClass: organizationalUnit
 ou: People
-\n
 dn: ou=Group,dc=itc299,dc=local
 objectClass: organizationalUnit
 ou: Group" > base.ldif
-\n
+
 ldapadd -x -W -D "cn=ldapadm,dc=itc299,dc=local" -f base.ldif -y /root/ldap_admin_pass
+
 slaptest -u
+
 setenforce 0
 
 systemctl restart httpd
