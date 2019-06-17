@@ -87,7 +87,7 @@ gcloud compute instances create nfspriva1 \
     --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
-    --tags="lbtpriv1","ssh1" \
+    --tags="lbtpriv1","privports1" \
     --metadata-from-file startup-script=/home/jam198604/nfspriv.sh
 
 gcloud compute instances create ldappriva1 \
