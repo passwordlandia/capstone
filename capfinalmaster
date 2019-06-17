@@ -21,17 +21,17 @@ gcloud compute networks subnets create lbtpu2-subnet \
 gcloud compute firewall-rules create allow-privports1 \
     --network=lbtpriv1 \
     --target-tags="privports1" \
-    --allow=tcp:22,5432
+    --allow=tcp:5432
 
 gcloud compute firewall-rules create allow-lbtpriv1-and-health \
      --source-ranges=130.211.0.0/22,35.191.0.0/16 \
      --target-tags="lbtpriv1" \
-     --allow tcp:22,5432
+     --allow tcp:5432
 
 gcloud compute firewall-rules create allow-pubports2 \
     --network=lbtpubl2 \
     --target-tags="pubports2" \
-    --allow=tcp:22,8000
+    --allow=tcp:8000
 
 gcloud compute firewall-rules create allow-lbtpr1-subnet \
     --network=lbtpriv1 \
@@ -113,7 +113,7 @@ gcloud compute instances create appubli2 \
 gcloud compute instances create djpubli1 \
     --image-family centos-7 \
     --image-project centos-cloud \
-    --zone=us-west1-b  \
+    --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --tags="http-server","https-server","lbtpubl2" \
@@ -122,7 +122,7 @@ gcloud compute instances create djpubli1 \
 gcloud compute instances create djpubli2 \
     --image-family centos-7 \
     --image-project centos-cloud \
-    --zone=us-west1-b  \
+    --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --tags="http-server","https-server","lbtpubl2" \
@@ -131,7 +131,7 @@ gcloud compute instances create djpubli2 \
 gcloud compute instances create djpubli3  \
     --image-family centos-7 \
     --image-project centos-cloud \
-    --zone=us-west1-b  \
+    --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --tags="http-server","https-server","lbtpubl2" \
@@ -147,7 +147,7 @@ gcloud compute instance-groups set-named-ports lbtpr1 \
     --zone=us-west1-b
 
 gcloud compute instance-groups unmanaged add-instances lbtpr1 \
-    --instances pgtpriva1 \
+    --instances pgtpriv1 \
     --zone us-west1-b
 
 gcloud compute instance-groups unmanaged create lbtpu2 \
