@@ -163,7 +163,7 @@ gcloud compute instance-groups set-named-ports lbtpr1 \
 
 gcloud compute instance-groups unmanaged add-instances lbtpr1 \
     --instances pgtpriva1 \
-    --zone us-west1-b
+    --zone=us-west1-b
 
 gcloud compute instance-groups unmanaged create lbtpu2 \
     --zone=us-west1-b
