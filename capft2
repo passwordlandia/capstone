@@ -1,0 +1,184 @@
+#!/bin/bash
+
+#####################################################################
+################Firewall Allow Rules#################################
+#####################################################################
+gcloud compute firewall-rules create allow-privports1 \
+    --network=lbtpriv1 \
+    --target-tags="privports1" \
+    --allow=tcp:80,110
+
+gcloud compute firewall-rules create allow-lbtpriv1-and-health \
+     --source-ranges=130.211.0.0/22,35.191.0.0/16 \
+     --target-tags="lbtpriv1" \
+     --allow tcp:110
+
+gcloud compute firewall-rules create allow-pubports2 \
+    --network=lbtpubl2 \
+    --target-tags="pubports2" \
+    --allow=tcp:80,110
+
+gcloud compute firewall-rules create allow-lbtpr1-subnet \
+    --network=lbtpriv1 \
+    --action=allow \
+    --direction=ingress \
+    --source-ranges=10.138.1.0/24 \
+    --rules=tcp
+
+gcloud compute firewall-rules create allow-lbtpu2-subnet \
+    --network=lbtpubl2 \
+    --action=allow \
+    --direction=egress \
+    --destination-ranges=10.138.1.0/24 \
+    --rules=tcp
+#####################################################################
+################Instances############################################
+#####################################################################
+gcloud compute instances create lbtpriva1 \
+    --image-family debian-9 \
+    --image-project debian-cloud \
+    --zone=us-west1-b \
+    --tags="privports1","lbtpriv1" \
+    --metadata-from-file startup-script=/home/jam198604/lbprivate.sh
+
+gcloud compute instances create pgtpriva1 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --zone=us-west1-b \
+    --machine-type f1-micro \
+    --tags="privports1","lbtpriv1","myssh" \
+    --metadata-from-file startup-script=/home/jam198604/pgpriv.sh
+
+gcloud compute instances create nfspriva1 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --zone=us-west1-b \
+    --machine-type f1-micro \
+    --tags="http-server","https-server","lbtpriv1","myssh" \
+    --metadata-from-file startup-script=/home/jam198604/nfspriv.sh
+
+gcloud compute instances create ldappriva1 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --zone=us-west1-b \
+    --machine-type f1-micro \
+    --tags="http-server","https-server","lbtpriv1","myssh" \
+    --metadata-from-file startup-script=/home/jam198604/ldappriv.sh
+
+gcloud compute instances create nagpriva1 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --zone=us-west1-b \
+    --machine-type f1-micro \
+    --tags="http-server","https-server","lbtpriv1","myssh" \
+    --metadata-from-file startup-script=/home/jam198604/nagpriv.sh
+
+gcloud compute instances create lbtpubli2 \
+    --image-family debian-9 \
+    --image-project debian-cloud \   
+    --zone=us-west1-b \
+    --tags="pubports2","lbtpubl2","myssh" \
+    --metadata-from-file startup-script=/home/jam198604/lbpublic.sh
+
+gcloud compute instances create appubli2 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --zone=us-west1-b  \
+    --machine-type f1-micro \
+    --tags="http-server","https-server","lbtpubl2","myssh" \
+    --metadata-from-file startup-script=/home/jam198604/appublic.sh
+
+gcloud compute instances create djpubli1 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --zone=us-west1-b  \
+    --machine-type f1-micro \
+    --tags="http-server","https-server","lbtpubl2","myssh" \
+    --metadata-from-file startup-script=/home/jam198604/djpubs.sh
+
+gcloud compute instances create djpubli2 \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --zone=us-west1-b  \
+    --machine-type f1-micro \
+    --tags="http-server","https-server","lbtpubl2","myssh" \
+    --metadata-from-file startup-script=/home/jam198604/djpubs.sh
+
+gcloud compute instances create djpubli3  \
+    --image-family centos-7 \
+    --image-project centos-cloud \
+    --zone=us-west1-b  \
+    --machine-type f1-micro \
+    --tags="http-server","https-server","lbtpubl2","myssh" \
+    --metadata-from-file startup-script=/home/jam198604/djpubs.sh
+#####################################################################
+######Instance groups, health check and backend services#############
+#####################################################################
+gcloud compute instance-groups unmanaged create lbtpr1 \
+    --zone=us-west1-b
+
+gcloud compute instance-groups set-named-ports lbtpr1 \
+    --named-ports tcp110:110 \
+    --zone=us-west1-b
+
+gcloud compute instance-groups unmanaged add-instances lbtpr1 \
+    --instances lbtpriva1,pgtpriva1,nfspriva1,ldappriva1,nagpriva1 \
+    --zone us-west1-b
+
+gcloud compute instance-groups unmanaged create lbtpu2 \
+    --zone=us-west1-b
+
+gcloud compute instance-groups set-named-ports lbtpu2 \
+    --named-ports tcp110:110 \
+    --zone=us-west1-b
+
+gcloud compute instance-groups unmanaged add-instances lbtpu2 \
+    --instances lbtpubli2,appubli2,djpubli1,djpubli2,djpubli3 \
+    --zone us-west1-b
+
+gcloud compute health-checks create tcp lbtpriv1-health-check --port 110
+
+gcloud compute backend-services create lbtpriv1-bes \
+    --global \
+    --protocol TCP \
+    --health-checks lbtpriv1-health-check \
+    --timeout 5m \
+    --port-name tcp110
+    
+gcloud compute backend-services add-backend lbtpriv1-bes\
+    --global \
+    --instance-group lbtpr1 \
+    --instance-group-zone us-west1-b \
+    --balancing-mode UTILIZATION \
+    --max-utilization 0.8
+
+gcloud compute target-tcp-proxies create lbtpriv1-target-proxy \
+    --backend-service lbtpriv1-bes \
+    --proxy-header NONE
+
+gcloud compute addresses create lbtpriv1-static-ipv4 \
+    --ip-version=IPV4 \
+    --global
+
+gcloud beta compute forwarding-rules create lbtpriv1-ipv4-forwarding-rule \
+    --global \
+    --target-tcp-proxy lbtpriv1-target-proxy \
+    --address lbtpriv1-static-ipv4 \
+    --ports 110
+######################This is for my 2nd lb###########################################
+gcloud compute http-health-checks create basic-check
+
+gcloud compute addresses create lbtpubl2 \
+    --region=us-west1
+
+gcloud compute target-pools create lbtpubl2-pool \
+    --region=us-west1 --http-health-check basic-check
+    
+gcloud compute target-pools add-instances lbtpubl2-pool \
+    --instances appubli2,djpubli1,djpubli2,djpubli3 \
+
+gcloud compute forwarding-rules create lbtpu2-rule \
+    --region=us-west1 \
+    --ports 80 \
+    --address lbtpubl2 \
+    --target-pool lbtpubl2-pool
