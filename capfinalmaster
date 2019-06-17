@@ -46,6 +46,16 @@ gcloud compute firewall-rules create allow-lbtpu2-subnet \
     --direction=egress \
     --destination-ranges=10.138.1.0/24 \
     --rules=tcp
+
+gcloud compute firewall-rules create allow-ssh \
+    --network=lbtpriv1 \
+    --target-tags="privports1" \
+    --allow=tcp:22
+
+gcloud compute firewall-rules create allow-ssh2 \
+    --network=lbtpubl2 \
+    --target-tags="pubports2" \
+    --allow=tcp:22
 #####################################################################
 ################Instances############################################
 #####################################################################
