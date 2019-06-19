@@ -46,7 +46,7 @@ gcloud compute firewall-rules create allow-ssh3 \
     --allow=tcp:22
 
 gcloud compute firewall-rules create allow-ssh31 \
-    --network=lbtpriv1
+    --network=lbtpriv1 \
     --direction=egress \
     --allow=tcp:22
 
