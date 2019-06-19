@@ -42,14 +42,28 @@ gcloud compute firewall-rules create allow-lbtpu2-subnet \
     --destination-ranges=10.138.1.0/24 \
     --rules=tcp
 
-gcloud compute firewall-rules create allow-ssh1 \
+gcloud compute firewall-rules create allow-ssh3 \
     --network=lbtpriv1 \
     --target-tags="ssh1" \
+    --direction=ingress \
     --allow=tcp:22
 
-gcloud compute firewall-rules create allow-ssh2 \
+gcloud compute firewall-rules create allow-ssh31 \
+    --network=lbtpriv1 \
+    --target-tags="ssh1" \
+    --direction=egress \
+    --allow=tcp:22
+
+gcloud compute firewall-rules create allow-ssh41 \
     --network=lbtpubl2 \
     --target-tags="ssh2" \
+    --direction=ingress \
+    --allow=tcp:22
+
+gcloud compute firewall-rules create allow-ssh42 \
+    --network=lbtpubl2 \
+    --target-tags="ssh2" \
+    --direction=egress \
     --allow=tcp:22
 
 gcloud compute firewall-rules create allow-lbtpriv1-and-health \
