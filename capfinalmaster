@@ -50,12 +50,12 @@ gcloud compute firewall-rules create allow-ssh31 \
     --direction=egress \
     --allow=tcp:22
 
-gcloud compute firewall-rules create allow-ssh41 \
+gcloud compute firewall-rules create allow-ssh4 \
     --network=lbtpubl2 \
     --direction=ingress \
     --allow=tcp:22
 
-gcloud compute firewall-rules create allow-ssh42 \
+gcloud compute firewall-rules create allow-ssh41 \
     --network=lbtpubl2 \
     --direction=egress \
     --allow=tcp:22
