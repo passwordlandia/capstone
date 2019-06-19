@@ -70,7 +70,7 @@ gcloud compute instances create lbtpriva1 \
     --zone=us-west1-b \
     --subnet=lbtpr1-subnet \
     --tags="privports1","lbtpriv1" \
-    --metadata-from-file startup-script=/home/capstone/jam198604/lbprivate.sh
+    --metadata-from-file startup-script=/home/jam198604/capstone/lbprivate.sh
 
 gcloud compute instances create pgtpriva1 \
     --image-family centos-7 \
@@ -79,7 +79,7 @@ gcloud compute instances create pgtpriva1 \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags="privports1","lbtpriv1" \
-    --metadata-from-file startup-script=/home/capstone/jam198604/pgpriv.sh
+    --metadata-from-file startup-script=/home/jam198604/capstone/pgpriv.sh
 
 gcloud compute instances create nfspriva1 \
     --image-family centos-7 \
@@ -88,7 +88,7 @@ gcloud compute instances create nfspriva1 \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags="lbtpriv1","allow-ssh1" \
-    --metadata-from-file startup-script=/home/capstone/jam198604/nfspriv.sh
+    --metadata-from-file startup-script=/home/jam198604/capstone/nfspriv.sh
 
 gcloud compute instances create ldappriva1 \
     --image-family centos-7 \
@@ -97,7 +97,7 @@ gcloud compute instances create ldappriva1 \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags="lbtpriv1","allow-ssh1","http-server","https-server" \
-    --metadata-from-file startup-script=/home/capstone/jam198604/ldappriv.sh
+    --metadata-from-file startup-script=/home/jam198604/capstone/ldappriv.sh
 
 gcloud compute instances create nagpriva1 \
     --image-family centos-7 \
@@ -106,7 +106,7 @@ gcloud compute instances create nagpriva1 \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
     --tags="lbtpriv1","allow-ssh1","http-server","https-server" \
-    --metadata-from-file startup-script=/home/capstone/jam198604/nagpriv.sh
+    --metadata-from-file startup-script=/home/jam198604/capstone/nagpriv.sh
 
 gcloud compute instances create lbtpubli2 \
     --image-family debian-9 \
@@ -114,7 +114,7 @@ gcloud compute instances create lbtpubli2 \
     --zone=us-west1-b \
     --subnet=lbtpu2-subnet \
     --tags="lbtpubl2","pubports2","allow-ssh2" \
-    --metadata-from-file startup-script=/home/capstone/jam198604/lbpublic.sh
+    --metadata-from-file startup-script=/home/jam198604/capstone/lbpublic.sh
 
 gcloud compute instances create appubli2 \
     --image-family centos-7 \
@@ -123,7 +123,7 @@ gcloud compute instances create appubli2 \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --tags="lbtpubl2","allow-ssh2" \
-    --metadata-from-file startup-script=/home/capstone/jam198604/appublic.sh
+    --metadata-from-file startup-script=/home/jam198604/capstone/appublic.sh
 
 gcloud compute instances create djpubli1 \
     --image-family centos-7 \
@@ -132,7 +132,7 @@ gcloud compute instances create djpubli1 \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --tags="lbtpubl2","allow-ssh2" \
-    --metadata-from-file startup-script=/home/capstone/jam198604/djpubs.sh
+    --metadata-from-file startup-script=/home/jam198604/capstone/djpubs.sh
 
 gcloud compute instances create djpubli2 \
     --image-family centos-7 \
@@ -141,7 +141,7 @@ gcloud compute instances create djpubli2 \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --tags="lbtpubl2","allow-ssh2" \
-    --metadata-from-file startup-script=/home/capstone/jam198604/djpubs.sh
+    --metadata-from-file startup-script=/home/jam198604/capstone/djpubs.sh
 
 gcloud compute instances create djpubli3  \
     --image-family centos-7 \
@@ -150,7 +150,7 @@ gcloud compute instances create djpubli3  \
     --machine-type f1-micro \
     --subnet=lbtpu2-subnet \
     --tags="lbtpubl2","allow-ssh2" \
-    --metadata-from-file startup-script=/home/capstone/jam198604/djpubs.sh
+    --metadata-from-file startup-script=/home/jam198604/capstone/djpubs.sh
 #####################################################################
 ##################Instance groups####################################
 #####################################################################
