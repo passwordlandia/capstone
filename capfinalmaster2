@@ -20,7 +20,7 @@ gcloud compute networks subnets create lbtpu2-subnet \
 #####################################################################
 gcloud compute firewall-rules create allow-privports1 \
     --network=lbtpriv1 \
-    --allow=tcp:5432
+    --allow=tcp:5222
 
 gcloud compute firewall-rules create allow-pubports2 \
     --network=lbtpubl2 \
@@ -75,7 +75,7 @@ gcloud compute instances create lbtpriva1 \
     --image-project debian-cloud \
     --zone=us-west1-b \
     --subnet=lbtpr1-subnet \
-    --tags="privports1","lbtpriv1" \
+    --tags="privports1" \
     --metadata-from-file startup-script=/home/jam198604/capstone/lbprivate.sh
 
 gcloud compute instances create pgtpriva1 \
@@ -84,7 +84,7 @@ gcloud compute instances create pgtpriva1 \
     --zone=us-west1-b \
     --machine-type f1-micro \
     --subnet=lbtpr1-subnet \
-    --tags="privports1","lbtpriv1" \
+    --tags="privports1" \
     --metadata-from-file startup-script=/home/jam198604/capstone/pgpriv.sh
 
 gcloud compute instances create nfspriva1 \
